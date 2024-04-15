@@ -19,20 +19,24 @@ void main() async {
   runApp(const MyApp());
 }
 
+Rx<ThemeMode> theme = ThemeMode.light.obs;
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'The Flutter chat',
-      debugShowCheckedModeBanner: false,
-      theme: lightThemeData(context),
-      darkTheme: darkThemeData(context),
-      themeMode: ThemeMode.dark,
-      // initialRoute: welcomePage,
+    return Obx(
+      () => GetMaterialApp(
+        title: 'The Flutter chat',
+        debugShowCheckedModeBanner: false,
+        theme: lightThemeData(context),
+        darkTheme: darkThemeData(context),
+        themeMode: theme.value,
+        // initialRoute: welcomePage,
 
-      home: const Home(),
-      routes: routes,
+        home: const Home(),
+        routes: routes,
+      ),
     );
   }
 }

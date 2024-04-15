@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -39,10 +38,8 @@ class CircleImage extends StatelessWidget {
                   scale: 1.0,
                 ),
                 placeholder: const AssetImage("assets/images/user_3.png"),
-                imageErrorBuilder: (context, error, stackTrace) => const Icon(
-                  CupertinoIcons.person_crop_circle,
-                  size: 65,
-                ),
+                imageErrorBuilder: (context, error, stackTrace) =>
+                    const ImageIcon(AssetImage("assets/images/user_icon.png")),
                 fit: BoxFit.cover,
               ),
             ),

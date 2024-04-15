@@ -12,14 +12,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-RxInt _selectedIndex = 0.obs;
+RxInt selectedIndex = 0.obs;
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        body: _selectedIndex.value == 4
+        body: selectedIndex.value == 4
             ? const SettingScreen()
             : const ChatsScreen(),
         bottomNavigationBar: buildBottomNavigationBar(),
@@ -30,9 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
   BottomNavigationBar buildBottomNavigationBar() {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      currentIndex: _selectedIndex.value,
+      currentIndex: selectedIndex.value,
       onTap: (value) {
-        _selectedIndex.value = value;
+        selectedIndex.value = value;
       },
       items: [
         const BottomNavigationBarItem(

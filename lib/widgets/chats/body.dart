@@ -2,8 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/widgets/components/chat_card.dart';
-import 'package:flutter_chat/widgets/components/filled_outline_button.dart';
-import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/screens/messages/message_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,22 +13,22 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.fromLTRB(
-              kDefaultPadding, 0, kDefaultPadding, kDefaultPadding),
-          color: kPrimaryColor,
-          child: Row(
-            children: [
-              FillOutlineButton(press: () {}, text: "Recent Message"),
-              const SizedBox(width: kDefaultPadding),
-              FillOutlineButton(
-                press: () {},
-                text: "Active",
-                isFilled: false,
-              ),
-            ],
-          ),
-        ),
+        // Container(
+        //   padding: const EdgeInsets.fromLTRB(
+        //       kDefaultPadding, 0, kDefaultPadding, kDefaultPadding),
+        //   color: kPrimaryColor,
+        //   child: Row(
+        //     children: [
+        //       FillOutlineButton(press: () {}, text: "Recent Message"),
+        //       const SizedBox(width: kDefaultPadding),
+        //       FillOutlineButton(
+        //         press: () {},
+        //         text: "Active",
+        //         isFilled: false,
+        //       ),
+        //     ],
+        //   ),
+        // ),
         Expanded(
           child: StreamBuilder(
               stream: FirebaseController.getAllChats(),
