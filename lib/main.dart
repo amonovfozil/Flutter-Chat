@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat/firebase_options.dart';
 import 'package:flutter_chat/route/route_name.dart';
 import 'package:flutter_chat/screens/authentication/signin_or_signup_screen.dart';
-import 'package:flutter_chat/screens/chats/chats_screen.dart';
+import 'package:flutter_chat/screens/home/home_screen.dart';
 import 'package:flutter_chat/utils/theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -46,7 +46,7 @@ class Home extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, AsyncSnapshot<User?> userSnapshot) {
           if (userSnapshot.hasData) {
-            return const ChatsScreen();
+            return const HomeScreen();
           } else {
             return const SignScreen();
           }

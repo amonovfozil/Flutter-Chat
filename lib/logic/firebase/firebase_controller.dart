@@ -38,10 +38,10 @@ class FirebaseController extends GetxController {
 
   static UserModel me = UserModel(
     id: user.uid,
-    name: user.displayName.toString(),
+    name: user.displayName.toString().obs,
     email: user.email.toString(),
     password: "",
-    image: user.photoURL,
+    image: (user.photoURL ?? "").obs,
     createdAt: DateTime.now().toIso8601String(),
     isOnline: false,
     lastActive: '',
@@ -64,16 +64,25 @@ class FirebaseController extends GetxController {
     });
   }
 
+// update online or last active status of user
+  static Future<void> updateActiveStatus(bool isOnline) async {
+    firestore.collection('users').doc(user.uid).update({
+      'is_online': isOnline,
+      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+      'push_token': me.pushToken,
+    });
+  }
+
 // for creating a new user
   static Future<void> createUser() async {
     final time = DateTime.now();
 
     final newUser = UserModel(
       id: user.uid,
-      name: Signcontroller.nameContrl.text,
+      name: Signcontroller.nameContrl.text.obs,
       email: Signcontroller.mailContrl.text,
       password: Signcontroller.passwordContrl.text,
-      image: user.photoURL,
+      image: (user.photoURL ?? "").obs,
       createdAt: time.toIso8601String(),
       isOnline: false,
       lastActive: time.millisecondsSinceEpoch.toString(),
@@ -88,12 +97,41 @@ class FirebaseController extends GetxController {
 
 // get all contacts
   static RxList<UserModel> contacts = <UserModel>[].obs;
-  static Future<void> getContact() async {
+  static Future<void> getAllContact() async {
     var list = await firestore.collection('users').get();
     contacts.value = List<UserModel>.from(list.docs
         .map((queryData) => UserModel.fromJson(queryData.data()))
         .toList());
     log("contact 222 : $contacts");
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> streamAllContact() {
+    return firestore.collection('users').snapshots();
+  }
+
+// update profile picture of user
+  static Future<void> updateProfilePicture(File file) async {
+    //getting image file extension
+    final ext = file.path.split('.').last;
+    log('Extension: $ext');
+
+    //storage file ref with path
+    final ref = storage.ref().child('profile_pictures/${user.uid}.$ext');
+
+    //uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    });
+
+    //updating image in firestore database
+    me.image.value = await ref.getDownloadURL();
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({'image': me.image.value});
+    await getSelfInfo();
   }
 
 // for adding an chat user for our conversation
@@ -126,6 +164,15 @@ class FirebaseController extends GetxController {
           .doc(newChat.id)
           .set(newChat.toJson());
     }
+  }
+
+  // for getting id's of known users from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats() {
+    return firestore
+        .collection('chats')
+        .doc(user.uid)
+        .collection('my_chats')
+        .snapshots();
   }
 
   // for getting firebase messaging token
@@ -175,15 +222,6 @@ class FirebaseController extends GetxController {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
-  // for getting id's of known users from firestore database
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats() {
-    return firestore
-        .collection('chats')
-        .doc(user.uid)
-        .collection('my_chats')
-        .snapshots();
-  }
-
   // // for getting all users from firestore database
   // static Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats(
   //     List<String> userIds) {
@@ -207,30 +245,6 @@ class FirebaseController extends GetxController {
   //   });
   // }
 
-  // update profile picture of user
-  static Future<void> updateProfilePicture(File file) async {
-    //getting image file extension
-    final ext = file.path.split('.').last;
-    log('Extension: $ext');
-
-    //storage file ref with path
-    final ref = storage.ref().child('profile_pictures/${user.uid}.$ext');
-
-    //uploading image
-    await ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-        .then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
-
-    //updating image in firestore database
-    me.image = await ref.getDownloadURL();
-    await firestore
-        .collection('users')
-        .doc(user.uid)
-        .update({'image': me.image});
-  }
-
   // for getting specific user info
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
       UserModel chatUser) {
@@ -238,15 +252,6 @@ class FirebaseController extends GetxController {
         .collection('users')
         .where('id', isEqualTo: chatUser.id)
         .snapshots();
-  }
-
-  // update online or last active status of user
-  static Future<void> updateActiveStatus(bool isOnline) async {
-    firestore.collection('users').doc(user.uid).update({
-      'is_online': isOnline,
-      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
-      'push_token': me.pushToken,
-    });
   }
 
   ///************** Chat Screen Related APIs **************

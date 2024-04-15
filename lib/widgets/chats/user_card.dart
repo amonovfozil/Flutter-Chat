@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/models/user_models.dart';
+import 'package:flutter_chat/utils/helper/my_date_util.dart';
+import 'package:flutter_chat/widgets/components/circle_image.dart';
 
 import '../../utils/constants.dart';
 
@@ -25,15 +26,9 @@ class UserCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                user.image != null
-                    ? CircleAvatar(
-                        radius: 24,
-                        backgroundImage: AssetImage(user.image!),
-                      )
-                    : const Icon(
-                        CupertinoIcons.person_crop_circle,
-                        size: 65,
-                      ),
+                CircleImage(
+                  img: user.image,
+                ),
                 if (user.isOnline)
                   Positioned(
                     right: 0,
@@ -60,14 +55,19 @@ class UserCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.name,
+                      user.name.value,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 8),
                     Opacity(
                       opacity: 0.64,
-                      child: Text(user.lastActive),
+                      child: Text(
+                        MyDateUtil.getLastActiveTime(
+                          context: context,
+                          lastActive: user.lastActive,
+                        ),
+                      ),
                     ),
                   ],
                 ),

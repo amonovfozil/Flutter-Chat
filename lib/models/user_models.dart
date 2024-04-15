@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 
 UserModel userModelsFromJson(String str) =>
     UserModel.fromJson(json.decode(str));
@@ -8,8 +9,8 @@ String userModelsToJson(UserModel data) => json.encode(data.toJson());
 
 class UserModel {
   String id;
-  String name;
-  String? image;
+  RxString name;
+  RxString image;
   String email;
   String password;
   String createdAt;
@@ -21,7 +22,7 @@ class UserModel {
   UserModel({
     required this.id,
     required this.name,
-    this.image,
+    required this.image,
     required this.email,
     required this.password,
     required this.createdAt,
@@ -32,8 +33,8 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         id: json["id"],
-        name: json['name'].toString(),
-        image: json['image'],
+        name: json['name'].toString().obs,
+        image: json['image'].toString().obs,
         email: json['mail'],
         password: json['password'].toString(),
         createdAt: json['created_at'],
@@ -45,8 +46,8 @@ class UserModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;
-    data['name'] = name;
-    data['image'] = image;
+    data['name'] = name.value;
+    data['image'] = image.value;
     data['mail'] = email;
     data['password'] = password;
     data['created_at'] = createdAt;

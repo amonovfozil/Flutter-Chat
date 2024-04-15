@@ -8,4 +8,10 @@ class UserController extends GetxController {
     FirebaseController.getSelfInfo();
     super.onInit();
   }
+
+  @override
+  void dispose() {
+    FirebaseController.updateActiveStatus(false);
+    super.dispose();
+  }
 }

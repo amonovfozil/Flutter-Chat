@@ -15,7 +15,7 @@ class ContactScreen extends StatefulWidget {
 class _ContactScreenState extends State<ContactScreen> {
   @override
   void initState() {
-    FirebaseController.getContact();
+    FirebaseController.getAllContact();
     super.initState();
   }
 

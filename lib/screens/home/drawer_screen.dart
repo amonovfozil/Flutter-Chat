@@ -4,6 +4,7 @@ import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/screens/drawer/contact_screen.dart';
 import 'package:flutter_chat/screens/drawer/setting_screen.dart';
 import 'package:flutter_chat/utils/constants.dart';
+import 'package:flutter_chat/widgets/components/circle_image.dart';
 import 'package:get/get.dart';
 
 class DrawerScreen extends StatelessWidget {
@@ -29,19 +30,11 @@ class DrawerScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: ListTile(
-                leading: FirebaseController.me.image != null
-                    ? CircleAvatar(
-                        backgroundImage: AssetImage(
-                          FirebaseController.me.image!,
-                        ),
-                        radius: 35,
-                      )
-                    : const Icon(
-                        CupertinoIcons.person_crop_circle,
-                        size: 65,
-                      ),
+                leading: CircleImage(
+                  img: FirebaseController.me.image,
+                ),
                 title: Text(
-                  FirebaseController.me.name,
+                  FirebaseController.me.name.value,
                   // "Amonov Fozil",
                   style: const TextStyle(fontSize: 20),
                 ),
@@ -54,7 +47,7 @@ class DrawerScreen extends StatelessWidget {
           ),
 
 // Category  items
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           ListTile(
             onTap: () {
               Get.to(() => const SettingScreen());
@@ -85,6 +78,7 @@ class DrawerScreen extends StatelessWidget {
               title: const Text("Sign out accaunt"),
               onTap: () {
                 FirebaseController.auth.signOut();
+                FirebaseController.updateActiveStatus(false);
               },
             ),
           ),

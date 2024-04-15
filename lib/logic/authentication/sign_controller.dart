@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
-import 'package:get/state_manager.dart';
+import 'package:flutter_chat/utils/helper/message_alert.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class Signcontroller extends GetxController {
@@ -29,11 +30,12 @@ class Signcontroller extends GetxController {
           email: mailContrl.text,
           password: passwordContrl.text,
         );
+        FirebaseController.getSelfInfo();
       }
     } on FirebaseAuthException catch (e) {
       log("Firebasesign  Error ${e.code}");
       log("Firebasesign  Error $e");
-
+      Get.showSnackbar(MessageSnack.errorSnack(message: e.code));
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
       } else if (e.code == 'wrong-password') {

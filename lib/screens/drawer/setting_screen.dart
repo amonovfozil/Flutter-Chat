@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/screens/home/drawer_screen.dart';
 import 'package:flutter_chat/utils/constants.dart';
+import 'package:flutter_chat/widgets/components/circle_image.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -15,9 +18,31 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  // final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // key: _scaffoldKey,
+      drawer: const DrawerScreen(),
+      appBar: AppBar(
+        backgroundColor: kPrimaryColor,
+        automaticallyImplyLeading: false,
+        // leading: IconButton(
+        //     onPressed: () {
+        //       _scaffoldKey.currentState!.openDrawer();
+        //     },
+        //     icon: const Icon(
+        //       CupertinoIcons.line_horizontal_3,
+        //     )),
+        title: const Text("Profile"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Stack(
@@ -25,7 +50,7 @@ class _SettingScreenState extends State<SettingScreen> {
               Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                    // color: kPrimaryColor,
+                    color: kPrimaryColor,
                     border: Border.all(
                         width: 1,
                         color: kBorderColor,
@@ -37,58 +62,13 @@ class _SettingScreenState extends State<SettingScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 10, right: 10, top: 50),
-                      child: Row(
-                        children: [
-                          const BackButton(),
-                          const SizedBox(width: kDefaultPadding * 0.75),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Settings",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          PopupMenuButton(
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      CupertinoIcons.delete,
-                                      size: 20,
-                                    ),
-                                    SizedBox(width: 15),
-                                    Text(
-                                      "Delete accaunt",
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20, horizontal: 20),
                       child: Row(
                         children: [
-                          FirebaseController.me.image != null
-                              ? CircleAvatar(
-                                  radius: 24,
-                                  backgroundImage:
-                                      AssetImage(FirebaseController.me.image!),
-                                )
-                              : const Icon(
-                                  CupertinoIcons.person_crop_circle,
-                                  size: 65,
-                                ),
+                          CircleImage(
+                            img: FirebaseController.me.image,
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: kDefaultPadding),
@@ -96,7 +76,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  FirebaseController.me.name,
+                                  FirebaseController.me.name.value,
                                   style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500),
@@ -149,11 +129,14 @@ class _SettingScreenState extends State<SettingScreen> {
                     height: 50,
                     width: 50,
                     child: FloatingActionButton(
-                      backgroundColor: kSecondaryColor,
+                      backgroundColor: kContentColorDarkTheme,
                       onPressed: () async {
                         openImageDialog();
                       },
-                      child: const Icon(Icons.add_a_photo_outlined),
+                      child: Icon(
+                        Icons.add_a_photo_outlined,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                     ),
                   )
                   // Container(
@@ -174,6 +157,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> openImageDialog() async {
     final ImagePicker picker = ImagePicker();
+    picker.supportsImageSource(ImageSource.gallery);
     XFile? image;
 // Pick an image.
     showDialog(
@@ -195,6 +179,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 image = await picker.pickImage(source: ImageSource.camera);
                 if (image != null) {
                   FirebaseController.updateProfilePicture(File(image!.path));
+                  Get.back();
                 }
               },
               child: Container(
@@ -215,6 +200,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 image = await picker.pickImage(source: ImageSource.gallery);
                 if (image != null) {
                   FirebaseController.updateProfilePicture(File(image!.path));
+                  Get.back();
                 }
               },
               child: Container(
