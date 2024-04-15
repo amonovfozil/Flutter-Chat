@@ -1,4 +1,4 @@
-import 'package:flutter_chat/logic/chats/user_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 
@@ -19,13 +19,13 @@ class AudioMessage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: kPrimaryColor
-            .withOpacity(message!.fromId == UserController.me.id ? 1 : 0.1),
+            .withOpacity(message!.fromId == FirebaseController.me.id ? 1 : 0.1),
       ),
       child: Row(
         children: [
           Icon(
             Icons.play_arrow,
-            color: message!.fromId == UserController.me.id
+            color: message!.fromId == FirebaseController.me.id
                 ? Colors.white
                 : kPrimaryColor,
           ),
@@ -40,7 +40,7 @@ class AudioMessage extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     height: 2,
-                    color: message!.fromId == UserController.me.id
+                    color: message!.fromId == FirebaseController.me.id
                         ? Colors.white
                         : kPrimaryColor.withOpacity(0.4),
                   ),
@@ -50,7 +50,7 @@ class AudioMessage extends StatelessWidget {
                       height: 8,
                       width: 8,
                       decoration: BoxDecoration(
-                        color: message!.fromId == UserController.me.id
+                        color: message!.fromId == FirebaseController.me.id
                             ? Colors.white
                             : kPrimaryColor,
                         shape: BoxShape.circle,
@@ -65,7 +65,7 @@ class AudioMessage extends StatelessWidget {
             "0.37",
             style: TextStyle(
                 fontSize: 12,
-                color: message!.fromId == UserController.me.id
+                color: message!.fromId == FirebaseController.me.id
                     ? Colors.white
                     : null),
           ),

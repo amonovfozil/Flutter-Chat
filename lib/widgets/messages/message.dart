@@ -1,4 +1,4 @@
-import 'package:flutter_chat/logic/chats/user_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 
@@ -33,11 +33,11 @@ class Message extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: kDefaultPadding),
       child: Row(
-        mainAxisAlignment: message.fromId == UserController.me.id
+        mainAxisAlignment: message.fromId == FirebaseController.me.id
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         children: [
-          if (message.fromId != UserController.me.id) ...[
+          if (message.fromId != FirebaseController.me.id) ...[
             const CircleAvatar(
               radius: 12,
               backgroundImage: AssetImage("assets/images/user_2.png"),
@@ -45,7 +45,7 @@ class Message extends StatelessWidget {
             const SizedBox(width: kDefaultPadding / 2),
           ],
           messageContaint(message),
-          if (message.fromId == UserController.me.id)
+          if (message.fromId == FirebaseController.me.id)
             MessageStatusDot(status: message.status)
         ],
       ),

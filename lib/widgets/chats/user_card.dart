@@ -1,16 +1,17 @@
-import 'package:flutter_chat/models/chat_models.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/models/user_models.dart';
 
 import '../../utils/constants.dart';
 
-class ChatCard extends StatelessWidget {
-  const ChatCard({
+class UserCard extends StatelessWidget {
+  const UserCard({
     super.key,
-    required this.chat,
+    required this.user,
     required this.press,
   });
 
-  final Chat chat;
+  final UserModel user;
   final VoidCallback press;
 
   @override
@@ -24,11 +25,16 @@ class ChatCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundImage: AssetImage(chat.image),
-                ),
-                if (chat.isActive)
+                user.image != null
+                    ? CircleAvatar(
+                        radius: 24,
+                        backgroundImage: AssetImage(user.image!),
+                      )
+                    : const Icon(
+                        CupertinoIcons.person_crop_circle,
+                        size: 65,
+                      ),
+                if (user.isOnline)
                   Positioned(
                     right: 0,
                     bottom: 0,
@@ -54,26 +60,18 @@ class ChatCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      chat.name,
-                      style:
-                          const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      user.name,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 8),
                     Opacity(
                       opacity: 0.64,
-                      child: Text(
-                        chat.lastMessage,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      child: Text(user.lastActive),
                     ),
                   ],
                 ),
               ),
-            ),
-            Opacity(
-              opacity: 0.64,
-              child: Text(chat.time),
             ),
           ],
         ),

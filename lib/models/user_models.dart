@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 UserModel userModelsFromJson(String str) =>
     UserModel.fromJson(json.decode(str));
 
@@ -11,7 +12,7 @@ class UserModel {
   String? image;
   String email;
   String password;
-  DateTime createdAt;
+  String createdAt;
   bool isOnline;
   String lastActive;
   String pushToken;
@@ -49,6 +50,9 @@ class UserModel {
     data['mail'] = email;
     data['password'] = password;
     data['created_at'] = createdAt;
+    data['is_online'] = isOnline;
+    data['last_active'] = lastActive;
+    data['push_token'] = pushToken;
     return data;
   }
 }

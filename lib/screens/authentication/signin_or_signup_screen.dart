@@ -49,7 +49,7 @@ class _SigninOrSignupScreenState extends State<SignScreen> {
                   child: CustomTextField(
                     labelText: "name",
                     icon: CupertinoIcons.person,
-                    controller: signcontroller.nameContrl,
+                    controller: Signcontroller.nameContrl,
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value != null && value.isEmpty) {
@@ -64,7 +64,7 @@ class _SigninOrSignupScreenState extends State<SignScreen> {
                 CustomTextField(
                   labelText: "mail",
                   icon: CupertinoIcons.mail,
-                  controller: signcontroller.mailContrl,
+                  controller: Signcontroller.mailContrl,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value != null && value.isEmpty) {
@@ -78,7 +78,7 @@ class _SigninOrSignupScreenState extends State<SignScreen> {
                 CustomTextField(
                   labelText: "Password",
                   icon: Icons.password,
-                  controller: signcontroller.passwordContrl,
+                  controller: Signcontroller.passwordContrl,
                   keyboardType: TextInputType.text,
                   validator: (value) {
                     if (value != null && value.isEmpty) {

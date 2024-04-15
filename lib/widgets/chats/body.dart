@@ -1,10 +1,12 @@
+import 'dart:developer';
+
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/widgets/components/chat_card.dart';
 import 'package:flutter_chat/widgets/components/filled_outline_button.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/screens/messages/message_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'chat_card.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -30,18 +32,38 @@ class Body extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: chatsData.length,
-            itemBuilder: (context, index) => ChatCard(
-              chat: chatsData[index],
-              press: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MessagesScreen(),
-                ),
-              ),
-            ),
-          ),
+          child: StreamBuilder(
+              stream: FirebaseController.getAllChats(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    snapshot.connectionState == ConnectionState.none) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData) {
+                  log("all snapshot data ${snapshot.data!.docs}");
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      List<ChatModel> chatsData = List.from(snapshot.data!.docs
+                          .map((data) => ChatModel.fromJson(
+                              snapshot.data!.docs[index].data()))
+                          .toList());
+                      return ChatCard(
+                        chat: chatsData[index],
+                        press: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MessagesScreen(),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: Text("IS Emty"),
+                  );
+                }
+              }),
         ),
       ],
     );

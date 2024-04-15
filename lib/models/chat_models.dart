@@ -1,71 +1,53 @@
-class Chat {
-  final String name, lastMessage, image, time;
-  final bool isActive;
+import 'dart:convert';
 
-  Chat({
-    this.name = '',
-    this.lastMessage = '',
-    this.image = '',
-    this.time = '',
+import 'package:flutter_chat/models/user_models.dart';
+
+ChatModel chatModelFromJson(String str) => ChatModel.fromJson(json.decode(str));
+
+String chatModelToJson(ChatModel data) => json.encode(data.toJson());
+
+enum ChatType { user, group, channel }
+
+const _statusEnumMap = {
+  'ChatType.user': ChatType.user,
+  'ChatType.group': ChatType.group,
+  'ChatType.channel': ChatType.channel,
+};
+
+class ChatModel {
+  final String id;
+  final String? name;
+  final String lastMessage;
+  final List<UserModel> users;
+  final bool isActive;
+  final ChatType type;
+  ChatModel({
+    required this.id,
+    required this.lastMessage,
+    required this.users,
+    required this.type,
+    this.name,
     this.isActive = false,
   });
-}
+  factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
+        id: json["id"],
+        name: json['name'],
+        users:
+            List.from(json['users'].map((e) => UserModel.fromJson(e)).toList()),
+        type: _statusEnumMap[json["type"]]!,
+        isActive: json['is_active'],
+        lastMessage: json['last_message'],
+      );
 
-List chatsData = [
-  Chat(
-    name: "Jenny Wilson",
-    lastMessage: "Hope you are doing well...",
-    image: "assets/images/user.png",
-    time: "3m ago",
-    isActive: false,
-  ),
-  Chat(
-    name: "Esther Howard",
-    lastMessage: "Hello Abdullah! I am...",
-    image: "assets/images/user_2.png",
-    time: "8m ago",
-    isActive: true,
-  ),
-  Chat(
-    name: "Ralph Edwards",
-    lastMessage: "Do you have update...",
-    image: "assets/images/user_3.png",
-    time: "5d ago",
-    isActive: false,
-  ),
-  Chat(
-    name: "Jacob Jones",
-    lastMessage: "You’re welcome :)",
-    image: "assets/images/user_4.png",
-    time: "5d ago",
-    isActive: true,
-  ),
-  Chat(
-    name: "Albert Flores",
-    lastMessage: "Thanks",
-    image: "assets/images/user_5.png",
-    time: "6d ago",
-    isActive: false,
-  ),
-  Chat(
-    name: "Jenny Wilson",
-    lastMessage: "Hope you are doing well...",
-    image: "assets/images/user.png",
-    time: "3m ago",
-    isActive: false,
-  ),
-  Chat(
-    name: "Esther Howard",
-    lastMessage: "Hello Abdullah! I am...",
-    image: "assets/images/user_2.png",
-    time: "8m ago",
-    isActive: true,
-  ),
-  Chat(
-    name: "Ralph Edwards",
-    lastMessage: "Do you have update...",
-    image: "assets/images/user_3.png",
-    time: "5d ago",
-    isActive: false,
-  ),
-];
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['users'] = List.from(users.map((e) => e.toJson()).toList());
+    data['is_active'] = isActive;
+    data['last_message'] = lastMessage;
+    data['type'] = type.toString();
+
+    return data;
+  }
+}

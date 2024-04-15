@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/models/user_models.dart';
+import 'package:flutter_chat/utils/helper/my_date_util.dart';
 
 import '../../utils/constants.dart';
 
@@ -10,11 +14,13 @@ class ChatCard extends StatelessWidget {
     required this.press,
   });
 
-  final Chat chat;
+  final ChatModel chat;
   final VoidCallback press;
 
   @override
   Widget build(BuildContext context) {
+    UserModel chatUser = chat.users
+        .firstWhere((element) => element.id != FirebaseController.me.id);
     return InkWell(
       onTap: press,
       child: Padding(
@@ -24,11 +30,16 @@ class ChatCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundImage: AssetImage(chat.image),
-                ),
-                if (chat.isActive)
+                chatUser.image != null
+                    ? CircleAvatar(
+                        radius: 24,
+                        backgroundImage: AssetImage(chatUser.image!),
+                      )
+                    : const Icon(
+                        CupertinoIcons.person_crop_circle,
+                        size: 65,
+                      ),
+                if (chatUser.isOnline)
                   Positioned(
                     right: 0,
                     bottom: 0,
@@ -54,7 +65,7 @@ class ChatCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      chat.name,
+                      chat.name ?? chatUser.name,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w500),
                     ),
@@ -73,7 +84,12 @@ class ChatCard extends StatelessWidget {
             ),
             Opacity(
               opacity: 0.64,
-              child: Text(chat.time),
+              child: Text(
+                MyDateUtil.getLastActiveTime(
+                  context: context,
+                  lastActive: chatUser.lastActive,
+                ),
+              ),
             ),
           ],
         ),

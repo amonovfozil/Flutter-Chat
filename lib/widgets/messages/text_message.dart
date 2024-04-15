@@ -1,4 +1,4 @@
-import 'package:flutter_chat/logic/chats/user_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 
@@ -24,13 +24,13 @@ class TextMessage extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: kPrimaryColor
-            .withOpacity(message?.fromId == UserController.me.id ? 1 : 0.1),
+            .withOpacity(message?.fromId == FirebaseController.me.id ? 1 : 0.1),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Text(
         message!.msg!,
         style: TextStyle(
-          color: message?.fromId == UserController.me.id
+          color: message?.fromId == FirebaseController.me.id
               ? Colors.white
               : Theme.of(context).textTheme.bodyLarge!.color,
         ),

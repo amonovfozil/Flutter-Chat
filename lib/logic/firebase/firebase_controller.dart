@@ -5,40 +5,128 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_chat/logic/authentication/sign_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
+import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:get/get.dart';
 
 class FirebaseController extends GetxController {
-  // for authentication
+  static Dio dio = Dio();
+
+  // Authentication
   static FirebaseAuth auth = FirebaseAuth.instance;
 
-  // for accessing cloud firestore database
+  // Firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  // for accessing firebase storage
+  //Firebase database
+  static FirebaseDatabase database = FirebaseDatabase.instance;
+
+  // Firebase storage
   static FirebaseStorage storage = FirebaseStorage.instance;
 
+  // Firebase messaging (Push Notification)
+  static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
   // for storing self information
+
+// to return current user
+  static User get user => auth.currentUser!;
+
   static UserModel me = UserModel(
     id: user.uid,
     name: user.displayName.toString(),
     email: user.email.toString(),
     password: "",
     image: user.photoURL,
-    createdAt: DateTime.now(),
+    createdAt: DateTime.now().toIso8601String(),
     isOnline: false,
     lastActive: '',
     pushToken: '',
   );
 
-  // to return current user
-  static User get user => auth.currentUser!;
+  // get current user info
+  static Future<void> getSelfInfo() async {
+    firestore.collection('users').doc(user.uid).get().then((user) async {
+      if (user.exists) {
+        me = UserModel.fromJson(user.data()!);
+        await getFirebaseMessagingToken();
 
-  // for accessing firebase messaging (Push Notification)
-  static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+        //for setting user status to active
+        FirebaseController.updateActiveStatus(true);
+        log('My Data: ${user.data()}');
+      } else {
+        await createUser().then((value) => getSelfInfo());
+      }
+    });
+  }
+
+// for creating a new user
+  static Future<void> createUser() async {
+    final time = DateTime.now();
+
+    final newUser = UserModel(
+      id: user.uid,
+      name: Signcontroller.nameContrl.text,
+      email: Signcontroller.mailContrl.text,
+      password: Signcontroller.passwordContrl.text,
+      image: user.photoURL,
+      createdAt: time.toIso8601String(),
+      isOnline: false,
+      lastActive: time.millisecondsSinceEpoch.toString(),
+      pushToken: '',
+    );
+
+    return await firestore
+        .collection('users')
+        .doc(user.uid)
+        .set(newUser.toJson());
+  }
+
+// get all contacts
+  static RxList<UserModel> contacts = <UserModel>[].obs;
+  static Future<void> getContact() async {
+    var list = await firestore.collection('users').get();
+    contacts.value = List<UserModel>.from(list.docs
+        .map((queryData) => UserModel.fromJson(queryData.data()))
+        .toList());
+    log("contact 222 : $contacts");
+  }
+
+// for adding an chat user for our conversation
+  static Future creatUserChat(UserModel user) async {
+    final data = await firestore
+        .collection('chats')
+        .doc(me.id)
+        .collection("my_chats")
+        .where('users', arrayContains: user.toJson())
+        .get();
+
+    log('data: ${data.docs}');
+    if (data.docs.isEmpty) {
+      ChatModel newChat = ChatModel(
+        id: "${me.id}&${user.id}",
+        lastMessage: "",
+        users: [user, me],
+        type: ChatType.user,
+      );
+      firestore
+          .collection('chats')
+          .doc(me.id)
+          .collection("my_chats")
+          .doc(newChat.id)
+          .set(newChat.toJson());
+      firestore
+          .collection('chats')
+          .doc(user.id)
+          .collection("my_chats")
+          .doc(newChat.id)
+          .set(newChat.toJson());
+    }
+  }
 
   // for getting firebase messaging token
   static Future<void> getFirebaseMessagingToken() async {
@@ -50,23 +138,11 @@ class FirebaseController extends GetxController {
         log('Push Token: $t');
       }
     });
-
-    // for handling foreground messages
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   log('Got a message whilst in the foreground!');
-    //   log('Message data: ${message.data}');
-
-    //   if (message.notification != null) {
-    //     log('Message also contained a notification: ${message.notification}');
-    //   }
-    // });
   }
 
   // for sending push notification
   static Future<void> sendPushNotification(
       UserModel chatUser, String msg) async {
-    final dio = Dio();
-
     try {
       final body = {
         "to": chatUser.pushToken,
@@ -99,115 +175,37 @@ class FirebaseController extends GetxController {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
-  // for adding an chat user for our conversation
-  static Future<bool> addChatUser(String email) async {
-    final data = await firestore
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-
-    log('data: ${data.docs}');
-
-    if (data.docs.isNotEmpty && data.docs.first.id != user.uid) {
-      //user exists
-
-      log('user exists: ${data.docs.first.data()}');
-
-      firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('my_users')
-          .doc(data.docs.first.id)
-          .set({});
-
-      return true;
-    } else {
-      //user doesn't exists
-
-      return false;
-    }
-  }
-
-  // for getting current user info
-  static Future<void> getSelfInfo() async {
-    await firestore.collection('users').doc(user.uid).get().then((user) async {
-      if (user.exists) {
-        me = UserModel.fromJson(user.data()!);
-        await getFirebaseMessagingToken();
-
-        //for setting user status to active
-        FirebaseController.updateActiveStatus(true);
-        log('My Data: ${user.data()}');
-      } else {
-        await createUser().then((value) => getSelfInfo());
-      }
-    });
-  }
-
-  // for creating a new user
-  static Future<void> createUser() async {
-    final time = DateTime.now();
-
-    final chatUser = UserModel(
-      id: user.uid,
-      name: user.displayName.toString(),
-      email: user.email.toString(),
-      password: "",
-      image: user.photoURL,
-      createdAt: time,
-      isOnline: false,
-      lastActive: time.millisecondsSinceEpoch.toString(),
-      pushToken: '',
-    );
-
-    return await firestore
-        .collection('users')
-        .doc(user.uid)
-        .set(chatUser.toJson());
-  }
-
   // for getting id's of known users from firestore database
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUsersId() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats() {
     return firestore
-        .collection('users')
+        .collection('chats')
         .doc(user.uid)
-        .collection('my_users')
+        .collection('my_chats')
         .snapshots();
   }
 
-  // for getting all users from firestore database
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(
-      List<String> userIds) {
-    log('\nUserIds: $userIds');
+  // // for getting all users from firestore database
+  // static Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats(
+  //     List<String> userIds) {
+  //   log('\nUserIds: $userIds');
 
-    return firestore
-        .collection('users')
-        .where('id',
-            whereIn: userIds.isEmpty
-                ? ['']
-                : userIds) //because empty list throws an error
-        // .where('id', isNotEqualTo: user.uid)
-        .snapshots();
-  }
+  //   return firestore
+  //       .collection('chat')
+  //       .where('id',
+  //           whereIn: userIds.isEmpty
+  //               ? ['']
+  //               : userIds) //because empty list throws an error
+  //       // .where('id', isNotEqualTo: user.uid)
+  //       .snapshots();
+  // }
 
-  // for adding an user to my user when first message is send
-  static Future<void> sendFirstMessage(UserModel chatUser, String msg,
-      MessageStatus status, MessageType type) async {
-    await firestore
-        .collection('users')
-        .doc(chatUser.id)
-        .collection('my_users')
-        .doc(user.uid)
-        .set({}).then((value) => sendMessage(chatUser, msg, status, type));
-  }
-
-  // for updating user information
-  static Future<void> updateUserInfo() async {
-    await firestore.collection('users').doc(user.uid).update({
-      'name': me.name,
-      // 'about': me.about,
-    });
-  }
+  // // for updating user information
+  // static Future<void> updateUserInfo() async {
+  //   await firestore.collection('users').doc(user.uid).update({
+  //     'name': me.name,
+  //     // 'about': me.about,
+  //   });
+  // }
 
   // update profile picture of user
   static Future<void> updateProfilePicture(File file) async {

@@ -14,12 +14,12 @@ class ChatsScreen extends StatefulWidget {
   State<ChatsScreen> createState() => _ChatsScreenState();
 }
 
-final userController = Get.put(UserController());
 // final userController = Get.put(UserController());
 
 class _ChatsScreenState extends State<ChatsScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 1;
+  final userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +28,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
       drawer: const DrawerScreen(),
       appBar: buildAppBar(),
       body: const Body(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: kPrimaryColor,
-        child: const Icon(
-          Icons.person_add_alt_1,
-          color: Colors.white,
-        ),
-      ),
       bottomNavigationBar: buildBottomNavigationBar(),
     );
   }

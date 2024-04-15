@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -9,23 +10,26 @@ class Signcontroller extends GetxController {
   var box = GetStorage();
   RxBool isSignUp = false.obs;
   static RxBool hasFocus = false.obs;
-  TextEditingController nameContrl = TextEditingController();
-  TextEditingController mailContrl = TextEditingController();
-  TextEditingController passwordContrl = TextEditingController();
+  static TextEditingController nameContrl = TextEditingController();
+  static TextEditingController mailContrl = TextEditingController();
+  static TextEditingController passwordContrl = TextEditingController();
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late UserCredential userCredential;
   sign() async {
     try {
-      await (isSignUp.value
-          ? _firebaseAuth.createUserWithEmailAndPassword(
-              email: mailContrl.text,
-              password: passwordContrl.text,
-            )
-          : _firebaseAuth.signInWithEmailAndPassword(
-              email: mailContrl.text,
-              password: passwordContrl.text,
-            ));
+      if (isSignUp.value) {
+        userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+          email: mailContrl.text,
+          password: passwordContrl.text,
+        );
+        FirebaseController.createUser();
+      } else {
+        await _firebaseAuth.signInWithEmailAndPassword(
+          email: mailContrl.text,
+          password: passwordContrl.text,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       log("Firebasesign  Error ${e.code}");
       log("Firebasesign  Error $e");
