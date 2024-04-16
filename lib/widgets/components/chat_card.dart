@@ -90,10 +90,12 @@ class ChatCard extends StatelessWidget {
                     Opacity(
                       opacity: 0.64,
                       child: Text(
-                        MyDateUtil.getLastActiveTime(
-                          context: context,
-                          lastActive: chatUser.lastActive,
-                        ),
+                        chatUser.isOnline
+                            ? "online"
+                            : MyDateUtil.getLastActiveTime(
+                                context: context,
+                                lastActive: chatUser.lastActive,
+                              ),
                       ),
                     ),
                   ],

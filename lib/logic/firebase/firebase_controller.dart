@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/authentication/sign_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/models/chat_models.dart';
@@ -111,21 +112,21 @@ class FirebaseController extends GetxController {
 
 // update profile picture of user
   static Future<void> updateProfilePicture(File file) async {
-    //getting image file extension
+//getting image file extension
     final ext = file.path.split('.').last;
     log('Extension: $ext');
 
-    //storage file ref with path
+//storage file ref with path
     final ref = storage.ref().child('profile_pictures/${user.uid}.$ext');
 
-    //uploading image
+//uploading image
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/$ext'))
         .then((p0) {
       log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
     });
 
-    //updating image in firestore database
+//updating image in firestore database
     me.image.value = await ref.getDownloadURL();
     await firestore
         .collection('users')
@@ -163,6 +164,10 @@ class FirebaseController extends GetxController {
           .collection("my_chats")
           .doc(newChat.id)
           .set(newChat.toJson());
+      // firestore
+      //     .collection('messages')
+      //     .doc(newChat.id)
+      //     .collection("my_messages");
     }
   }
 
@@ -173,6 +178,39 @@ class FirebaseController extends GetxController {
         .doc(user.uid)
         .collection('my_chats')
         .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getChatMessages(
+      String chatId) {
+    return firestore
+        .collection('messages')
+        .doc(chatId)
+        .collection("my_messages")
+        .snapshots();
+  }
+
+  // for sending message
+  static Future<void> sendMessage(
+      ChatModel chat, String msg, MessageType type) async {
+    //message sending time (also used as id)
+    // final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final time = Timestamp.now();
+
+    //message to send
+    final MessageModels message = MessageModels(
+      id: UniqueKey().toString(),
+      msg: msg,
+      status: MessageStatus.notView,
+      type: type,
+      fromId: me.id,
+      sendTime: time,
+    );
+
+    final ref =
+        firestore.collection('messages').doc(chat.id).collection("my_messages");
+    await ref.add(message.toJson()).then((value) => sendPushNotification(
+        chat.users.firstWhere((element) => element.id != me.id),
+        type == MessageType.text ? msg : 'image'));
   }
 
   // for getting firebase messaging token
@@ -256,47 +294,19 @@ class FirebaseController extends GetxController {
 
   ///************** Chat Screen Related APIs **************
 
-  // chats (collection) --> conversation_id (doc) --> messages (collection) --> message (doc)
-
   // useful for getting conversation id
   static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
       ? '${user.uid}_$id'
       : '${id}_${user.uid}';
 
-  // for getting all messages of a specific conversation from firestore database
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
-      UserModel user) {
-    return firestore
-        .collection('chats/${getConversationID(user.id)}/messages/')
-        .orderBy('sent', descending: true)
-        .snapshots();
-  }
-
-  // for sending message
-  static Future<void> sendMessage(UserModel chatUser, String msg,
-      MessageStatus status, MessageType type) async {
-    //message sending time (also used as id)
-    // final time = DateTime.now().millisecondsSinceEpoch.toString();
-    final time = DateTime.now();
-
-    //message to send
-    final MessageModels message = MessageModels(
-      id: chatUser.id,
-      msg: msg,
-      status: status,
-      type: type,
-      fromId: user.uid,
-      sendTime: time,
-    );
-
-    final ref = firestore
-        .collection('chats/${getConversationID(chatUser.id)}/messages/');
-    await ref
-        .doc(time.millisecondsSinceEpoch.toString())
-        .set(message.toJson())
-        .then((value) => sendPushNotification(
-            chatUser, type == MessageType.text ? msg : 'image'));
-  }
+  // // for getting all messages of a specific conversation from firestore database
+  // static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+  //     UserModel user) {
+  //   return firestore
+  //       .collection('chats/${getConversationID(user.id)}/messages/')
+  //       .orderBy('sent', descending: true)
+  //       .snapshots();
+  // }
 
   //update read status of message
   static Future<void> updateMessageReadStatus(MessageModels message) async {
@@ -317,13 +327,12 @@ class FirebaseController extends GetxController {
   }
 
   //send chat image
-  static Future<void> sendChatImage(UserModel chatUser, File file) async {
+  static Future<void> sendChatImage(ChatModel chat, File file) async {
     //getting image file extension
     final ext = file.path.split('.').last;
 
     //storage file ref with path
-    final ref = storage.ref().child(
-        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = storage.ref().child('images');
 
     //uploading image
     await ref
@@ -334,8 +343,7 @@ class FirebaseController extends GetxController {
 
     //updating image in firestore database
     final imageUrl = await ref.getDownloadURL();
-    await sendMessage(
-        chatUser, imageUrl, MessageStatus.notView, MessageType.image);
+    await sendMessage(chat, imageUrl, MessageType.image);
   }
 
   //delete message

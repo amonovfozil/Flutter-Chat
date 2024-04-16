@@ -5,9 +5,10 @@ import 'package:flutter_chat/widgets/components/chat_card.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/screens/messages/message_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class Body extends StatelessWidget {
-  const Body({super.key});
+class ChatScreenBody extends StatelessWidget {
+  const ChatScreenBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +48,17 @@ class Body extends StatelessWidget {
                           .toList());
                       return ChatCard(
                         chat: chatsData[index],
-                        press: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MessagesScreen(),
-                          ),
-                        ),
+                        press: () {
+                          Get.to(
+                            () => MessagesScreen(chat: chatsData[index]),
+                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const MessagesScreen(),
+                          //   ),
+                          // );
+                        },
                       );
                     },
                   );

@@ -43,6 +43,7 @@ class _SettingScreenState extends State<SettingScreen> {
             IconButton(
               onPressed: () {
                 FirebaseController.auth.signOut();
+                FirebaseController.updateActiveStatus(false);
               },
               icon: const Icon(
                 Icons.logout,

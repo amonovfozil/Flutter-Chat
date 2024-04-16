@@ -1,6 +1,8 @@
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/models/user_models.dart';
+import 'package:flutter_chat/widgets/components/circle_image.dart';
 
 import '../../utils/constants.dart';
 import 'audio_message.dart';
@@ -30,26 +32,38 @@ class Message extends StatelessWidget {
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: kDefaultPadding),
-      child: Row(
-        mainAxisAlignment: message.fromId == FirebaseController.me.id
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-        children: [
-          if (message.fromId != FirebaseController.me.id) ...[
-            const CircleAvatar(
-              radius: 12,
-              backgroundImage: AssetImage("assets/images/user_2.png"),
+    return StreamBuilder(
+        stream: FirebaseController.streamAllContact(),
+        builder: (context, snapshot) {
+          UserModel user = FirebaseController.contacts
+              .lastWhere((element) => element.id == message.fromId);
+          if (snapshot.hasData) {
+            user = UserModel.fromJson(snapshot.data!.docs
+                .firstWhere((element) => element.data()["id"] == message.fromId)
+                .data());
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(top: kDefaultPadding),
+            child: Row(
+              mainAxisAlignment: message.fromId == FirebaseController.me.id
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: [
+                // if (message.fromId != FirebaseController.me.id) ...[
+                //   CircleImage(
+                //     radius: 35,
+                //     img: user.image,
+                //   ),
+                //   const SizedBox(width: kDefaultPadding / 2),
+                // ],
+                messageContaint(message),
+                // if (message.fromId == FirebaseController.me.id)
+                //   MessageStatusDot(status: message.status)
+              ],
             ),
-            const SizedBox(width: kDefaultPadding / 2),
-          ],
-          messageContaint(message),
-          if (message.fromId == FirebaseController.me.id)
-            MessageStatusDot(status: message.status)
-        ],
-      ),
-    );
+          );
+        });
   }
 }
 
