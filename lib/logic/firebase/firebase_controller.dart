@@ -14,6 +14,7 @@ import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 
 class FirebaseController extends GetxController {
   static Dio dio = Dio();
@@ -59,10 +60,20 @@ class FirebaseController extends GetxController {
         //for setting user status to active
         FirebaseController.updateActiveStatus(true);
         log('My Data: ${user.data()}');
+        getAllContact();
       } else {
         await createUser().then((value) => getSelfInfo());
       }
     });
+  }
+
+// for getting specific user info
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
+      UserModel chatUser) {
+    return firestore
+        .collection('users')
+        .where('id', isEqualTo: chatUser.id)
+        .snapshots();
   }
 
 // update online or last active status of user
@@ -117,7 +128,7 @@ class FirebaseController extends GetxController {
     log('Extension: $ext');
 
 //storage file ref with path
-    final ref = storage.ref().child('profile_pictures/${user.uid}.$ext');
+    final ref = storage.ref(user.uid).child('profile_pictures/avatar.$ext');
 
 //uploading image
     await ref
@@ -164,10 +175,6 @@ class FirebaseController extends GetxController {
           .collection("my_chats")
           .doc(newChat.id)
           .set(newChat.toJson());
-      // firestore
-      //     .collection('messages')
-      //     .doc(newChat.id)
-      //     .collection("my_messages");
     }
   }
 
@@ -186,12 +193,17 @@ class FirebaseController extends GetxController {
         .collection('messages')
         .doc(chatId)
         .collection("my_messages")
+        .orderBy("send_time", descending: true)
         .snapshots();
   }
 
   // for sending message
   static Future<void> sendMessage(
-      ChatModel chat, String msg, MessageType type) async {
+    ChatModel chat,
+    MessageType type, {
+    String? msg,
+    FileModel? file,
+  }) async {
     //message sending time (also used as id)
     // final time = DateTime.now().millisecondsSinceEpoch.toString();
     final time = Timestamp.now();
@@ -200,6 +212,7 @@ class FirebaseController extends GetxController {
     final MessageModels message = MessageModels(
       id: UniqueKey().toString(),
       msg: msg,
+      file: file,
       status: MessageStatus.notView,
       type: type,
       fromId: me.id,
@@ -210,7 +223,50 @@ class FirebaseController extends GetxController {
         firestore.collection('messages').doc(chat.id).collection("my_messages");
     await ref.add(message.toJson()).then((value) => sendPushNotification(
         chat.users.firstWhere((element) => element.id != me.id),
-        type == MessageType.text ? msg : 'image'));
+        type == MessageType.text ? (msg ?? "") : 'image'));
+  }
+
+  //send chat image
+  static Future<void> sendChatFile(ChatModel chat, File file) async {
+    //getting image file extension
+    final ext = file.path.split('.').last;
+
+    //storage file ref with path
+    final ref = storage.ref(user.uid).child('chat_file/${basename(file.path)}');
+
+    //uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    });
+
+    final fileUrl = await ref.getDownloadURL();
+
+    FileModel uploadFile = FileModel(name: basename(file.path), url: fileUrl);
+
+    //updating image in firestore database
+    await sendMessage(chat, fileType(ext), file: uploadFile);
+  }
+
+  static MessageType fileType(String ext) {
+    switch (ext.toLowerCase()) {
+      case "jpeg":
+        return MessageType.image;
+      case "jpg":
+        return MessageType.image;
+      case "png":
+        return MessageType.image;
+      case "mp4":
+        return MessageType.video;
+      case "mp3":
+        return MessageType.audio;
+      case "pdf":
+        return MessageType.pdf;
+
+      default:
+        return MessageType.text;
+    }
   }
 
   // for getting firebase messaging token
@@ -232,7 +288,7 @@ class FirebaseController extends GetxController {
       final body = {
         "to": chatUser.pushToken,
         "notification": {
-          "title": me.name, //our name should be send
+          "title": me.name.value, //our name should be send
           "body": msg,
           "android_channel_id": "chats"
         },
@@ -260,21 +316,6 @@ class FirebaseController extends GetxController {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
-  // // for getting all users from firestore database
-  // static Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats(
-  //     List<String> userIds) {
-  //   log('\nUserIds: $userIds');
-
-  //   return firestore
-  //       .collection('chat')
-  //       .where('id',
-  //           whereIn: userIds.isEmpty
-  //               ? ['']
-  //               : userIds) //because empty list throws an error
-  //       // .where('id', isNotEqualTo: user.uid)
-  //       .snapshots();
-  // }
-
   // // for updating user information
   // static Future<void> updateUserInfo() async {
   //   await firestore.collection('users').doc(user.uid).update({
@@ -282,15 +323,6 @@ class FirebaseController extends GetxController {
   //     // 'about': me.about,
   //   });
   // }
-
-  // for getting specific user info
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
-      UserModel chatUser) {
-    return firestore
-        .collection('users')
-        .where('id', isEqualTo: chatUser.id)
-        .snapshots();
-  }
 
   ///************** Chat Screen Related APIs **************
 
@@ -324,26 +356,6 @@ class FirebaseController extends GetxController {
         .orderBy('sent', descending: true)
         .limit(1)
         .snapshots();
-  }
-
-  //send chat image
-  static Future<void> sendChatImage(ChatModel chat, File file) async {
-    //getting image file extension
-    final ext = file.path.split('.').last;
-
-    //storage file ref with path
-    final ref = storage.ref().child('images');
-
-    //uploading image
-    await ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-        .then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
-
-    //updating image in firestore database
-    final imageUrl = await ref.getDownloadURL();
-    await sendMessage(chat, imageUrl, MessageType.image);
   }
 
   //delete message

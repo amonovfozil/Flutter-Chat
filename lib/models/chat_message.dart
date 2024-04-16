@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum MessageType { text, audio, image, video }
+enum MessageType { text, audio, image, video, pdf }
 
 const _statusTypeMap = {
   'MessageType.text': MessageType.text,
   'MessageType.audio': MessageType.audio,
   'MessageType.image': MessageType.image,
   'MessageType.video': MessageType.video,
+  'MessageType.pdf': MessageType.pdf,
 };
 
 enum MessageStatus { notSent, notView, viewed }
@@ -27,6 +28,7 @@ String messageToJson(MessageModels data) => json.encode(data.toJson());
 class MessageModels {
   String id;
   String? msg;
+  FileModel? file;
   MessageType type;
   MessageStatus status;
   String fromId;
@@ -36,6 +38,7 @@ class MessageModels {
   MessageModels({
     required this.id,
     this.msg = "",
+    this.file,
     required this.type,
     required this.status,
     required this.fromId,
@@ -45,6 +48,7 @@ class MessageModels {
   factory MessageModels.fromJson(Map<String, dynamic> json) => MessageModels(
         id: json["id"],
         msg: json['msg'].toString(),
+        file: json['file'] == null ? null : FileModel.fromJson(json['file']),
         status: _statusMap[json['status']]!,
         type: _statusTypeMap[json['message_type']]!,
         fromId: json['from_id'].toString(),
@@ -55,6 +59,7 @@ class MessageModels {
     final data = <String, dynamic>{};
     data['id'] = id;
     data['msg'] = msg;
+    data['file'] = file == null ? null : file!.toJson();
     data['status'] = status.toString();
     data['message_type'] = type.toString();
     data['from_id'] = fromId;
@@ -63,47 +68,37 @@ class MessageModels {
   }
 }
 
-List demeChatMessages = [
-  // ChatMessage(
-  //   text: "Hi Sajol,",
-  //   messageType: ChatMessageType.text,
-  //   messageStatus: MessageStatus.viewed,
-  //   isSender: false,
-  // ),
-  // ChatMessage(
-  //   text: "Hello, How are you?",
-  //   messageType: ChatMessageType.text,
-  //   messageStatus: MessageStatus.viewed,
-  //   isSender: true,
-  // ),
-  // ChatMessage(
-  //   text: "",
-  //   messageType: ChatMessageType.audio,
-  //   messageStatus: MessageStatus.viewed,
-  //   isSender: false,
-  // ),
-  // ChatMessage(
-  //   text: "",
-  //   messageType: ChatMessageType.video,
-  //   messageStatus: MessageStatus.viewed,
-  //   isSender: true,
-  // ),
-  // ChatMessage(
-  //   text: "Error happend",
-  //   messageType: ChatMessageType.text,
-  //   messageStatus: MessageStatus.notSent,
-  //   isSender: true,
-  // ),
-  // ChatMessage(
-  //   text: "This looks great man!!",
-  //   messageType: ChatMessageType.text,
-  //   messageStatus: MessageStatus.viewed,
-  //   isSender: false,
-  // ),
-  // ChatMessage(
-  //   text: "Glad you like it",
-  //   messageType: ChatMessageType.text,
-  //   messageStatus: MessageStatus.notView,
-  //   isSender: true,
-  // ),
-];
+FileModel fileModelFromJson(String str) => FileModel.fromJson(json.decode(str));
+
+String fileModelToJson(FileModel data) => json.encode(data.toJson());
+
+class FileModel {
+  String name;
+  String url;
+  String? artistName;
+  String? duration;
+
+  FileModel({
+    required this.name,
+    required this.url,
+    this.artistName,
+    this.duration,
+  });
+
+  factory FileModel.fromJson(Map<String, dynamic> json) => FileModel(
+        name: json["file_name"],
+        url: json['file_url'].toString(),
+        artistName: json['artist_name'],
+        duration: json['duration'],
+      );
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['file_name'] = name;
+    data['file_url'] = url;
+    data['artist_name'] = artistName;
+    data['duration'] = duration;
+
+    return data;
+  }
+}

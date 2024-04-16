@@ -5,21 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/main.dart';
 import 'package:flutter_chat/screens/drawer/contact_screen.dart';
-import 'package:flutter_chat/screens/home/drawer_screen.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/widgets/components/circle_image.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class SettingScreen extends StatefulWidget {
-  const SettingScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<SettingScreen> createState() => _SettingScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   // final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -27,7 +26,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Obx(
       () => Scaffold(
         // key: _scaffoldKey,
-        drawer: const DrawerScreen(),
+        // drawer: const DrawerScreen(),
         appBar: AppBar(
           backgroundColor: kPrimaryColor,
           automaticallyImplyLeading: false,

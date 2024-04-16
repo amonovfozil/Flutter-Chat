@@ -2,7 +2,7 @@ import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/models/user_models.dart';
-import 'package:flutter_chat/widgets/components/circle_image.dart';
+import 'package:flutter_chat/widgets/messages/image_message.dart';
 
 import '../../utils/constants.dart';
 import 'audio_message.dart';
@@ -27,6 +27,14 @@ class Message extends StatelessWidget {
           return AudioMessage(message: message);
         case MessageType.video:
           return const VideoMessage();
+        case MessageType.image:
+          return ImageMessage(
+            message: message,
+          );
+        case MessageType.pdf:
+          return ImageMessage(
+            message: message,
+          );
         default:
           return const SizedBox();
       }

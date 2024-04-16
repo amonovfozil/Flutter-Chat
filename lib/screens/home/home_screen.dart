@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/screens/chats/chats_screen.dart';
-import 'package:flutter_chat/screens/drawer/setting_screen.dart';
+import 'package:flutter_chat/screens/drawer/profile_screen.dart';
 import 'package:flutter_chat/widgets/components/circle_image.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(
       () => Scaffold(
         body: selectedIndex.value == 4
-            ? const SettingScreen()
+            ? const ProfileScreen()
             : const ChatsScreen(),
         bottomNavigationBar: buildBottomNavigationBar(),
       ),
