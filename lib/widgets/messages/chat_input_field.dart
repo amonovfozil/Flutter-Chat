@@ -1,8 +1,8 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/models/chat_models.dart';
@@ -99,7 +99,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
                               children: [
                                 GestureDetector(
                                   onTap: () async {
-                                    String filename = "";
                                     File? file;
                                     FilePickerResult? result =
                                         await FilePicker.platform.pickFiles(
@@ -115,14 +114,9 @@ class _ChatInputFieldState extends State<ChatInputField> {
                                     );
 
                                     if (result != null) {
-                                      filename = result.files.first.name;
                                       file = File(result.paths.first!);
-                                      log("Select File NAME $filename");
-                                      log("Select File  $file");
-                                      FirebaseController.sendChatFile(
+                                      FileController.uploadChatFile(
                                           widget.chat, file);
-                                    } else {
-                                      // User canceled the picker
                                     }
                                   },
                                   child: Icon(
@@ -144,7 +138,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                                     image = await picker.pickImage(
                                         source: ImageSource.camera);
                                     if (image != null) {
-                                      await FirebaseController.sendChatFile(
+                                      await FileController.uploadChatFile(
                                           widget.chat, File(image.path));
                                       // Get.back();
                                     }

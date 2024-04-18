@@ -1,8 +1,8 @@
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/models/user_models.dart';
 import 'package:flutter_chat/widgets/messages/image_message.dart';
+import 'package:flutter_chat/widgets/messages/pdf_message.dart';
 
 import '../../utils/constants.dart';
 import 'audio_message.dart';
@@ -10,10 +10,7 @@ import 'text_message.dart';
 import 'video_message.dart';
 
 class Message extends StatelessWidget {
-  const Message({
-    super.key,
-    required this.message,
-  });
+  const Message({super.key, required this.message});
 
   final MessageModels message;
 
@@ -28,13 +25,9 @@ class Message extends StatelessWidget {
         case MessageType.video:
           return const VideoMessage();
         case MessageType.image:
-          return ImageMessage(
-            message: message,
-          );
+          return ImageMessage(message: message);
         case MessageType.pdf:
-          return ImageMessage(
-            message: message,
-          );
+          return PDFMessage(message: message);
         default:
           return const SizedBox();
       }
@@ -43,16 +36,16 @@ class Message extends StatelessWidget {
     return StreamBuilder(
         stream: FirebaseController.streamAllContact(),
         builder: (context, snapshot) {
-          UserModel user = FirebaseController.contacts
-              .lastWhere((element) => element.id == message.fromId);
-          if (snapshot.hasData) {
-            user = UserModel.fromJson(snapshot.data!.docs
-                .firstWhere((element) => element.data()["id"] == message.fromId)
-                .data());
-          }
+          // UserModel user = FirebaseController.contacts
+          //     .lastWhere((element) => element.id == message.fromId);
+          // if (snapshot.hasData) {
+          //   user = UserModel.fromJson(snapshot.data!.docs
+          //       .firstWhere((element) => element.data()["id"] == message.fromId)
+          //       .data());
+          // }
 
           return Padding(
-            padding: const EdgeInsets.only(top: kDefaultPadding),
+            padding: const EdgeInsets.only(top: kDefaultPadding / 3),
             child: Row(
               mainAxisAlignment: message.fromId == FirebaseController.me.id
                   ? MainAxisAlignment.end
@@ -65,6 +58,7 @@ class Message extends StatelessWidget {
                 //   ),
                 //   const SizedBox(width: kDefaultPadding / 2),
                 // ],
+
                 messageContaint(message),
                 // if (message.fromId == FirebaseController.me.id)
                 //   MessageStatusDot(status: message.status)

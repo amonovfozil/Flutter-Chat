@@ -27,6 +27,7 @@ String messageToJson(MessageModels data) => json.encode(data.toJson());
 
 class MessageModels {
   String id;
+  String chatId;
   String? msg;
   FileModel? file;
   MessageType type;
@@ -37,6 +38,7 @@ class MessageModels {
 
   MessageModels({
     required this.id,
+    required this.chatId,
     this.msg = "",
     this.file,
     required this.type,
@@ -47,6 +49,7 @@ class MessageModels {
 
   factory MessageModels.fromJson(Map<String, dynamic> json) => MessageModels(
         id: json["id"],
+        chatId: json["chat_id"],
         msg: json['msg'].toString(),
         file: json['file'] == null ? null : FileModel.fromJson(json['file']),
         status: _statusMap[json['status']]!,
@@ -58,8 +61,9 @@ class MessageModels {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;
+    data['chat_id'] = chatId;
     data['msg'] = msg;
-    data['file'] = file == null ? null : file!.toJson();
+    data['file'] = file?.toJson();
     data['status'] = status.toString();
     data['message_type'] = type.toString();
     data['from_id'] = fromId;
@@ -75,19 +79,25 @@ String fileModelToJson(FileModel data) => json.encode(data.toJson());
 class FileModel {
   String name;
   String url;
+  String? fromAdress;
+  String? dwnUrl;
   String? artistName;
   String? duration;
 
   FileModel({
     required this.name,
     required this.url,
+    this.fromAdress,
+    this.dwnUrl,
     this.artistName,
     this.duration,
   });
 
   factory FileModel.fromJson(Map<String, dynamic> json) => FileModel(
         name: json["file_name"],
-        url: json['file_url'].toString(),
+        url: json['file_url'],
+        fromAdress: json['from_adress'],
+        dwnUrl: json['download_url'],
         artistName: json['artist_name'],
         duration: json['duration'],
       );
@@ -96,6 +106,8 @@ class FileModel {
     final data = <String, dynamic>{};
     data['file_name'] = name;
     data['file_url'] = url;
+    data['from_adress'] = fromAdress;
+    data['download_url'] = dwnUrl;
     data['artist_name'] = artistName;
     data['duration'] = duration;
 

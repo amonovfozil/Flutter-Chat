@@ -14,7 +14,6 @@ import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 
 class FirebaseController extends GetxController {
   static Dio dio = Dio();
@@ -198,19 +197,15 @@ class FirebaseController extends GetxController {
   }
 
   // for sending message
-  static Future<void> sendMessage(
-    ChatModel chat,
-    MessageType type, {
-    String? msg,
-    FileModel? file,
-  }) async {
+  static Future<void> sendMessage(ChatModel chat, MessageType type,
+      {String? msg, FileModel? file}) async {
     //message sending time (also used as id)
-    // final time = DateTime.now().millisecondsSinceEpoch.toString();
     final time = Timestamp.now();
 
     //message to send
     final MessageModels message = MessageModels(
       id: UniqueKey().toString(),
+      chatId: chat.id,
       msg: msg,
       file: file,
       status: MessageStatus.notView,
@@ -219,54 +214,16 @@ class FirebaseController extends GetxController {
       sendTime: time,
     );
 
-    final ref =
-        firestore.collection('messages').doc(chat.id).collection("my_messages");
-    await ref.add(message.toJson()).then((value) => sendPushNotification(
-        chat.users.firstWhere((element) => element.id != me.id),
-        type == MessageType.text ? (msg ?? "") : 'image'));
-  }
-
-  //send chat image
-  static Future<void> sendChatFile(ChatModel chat, File file) async {
-    //getting image file extension
-    final ext = file.path.split('.').last;
-
-    //storage file ref with path
-    final ref = storage.ref(user.uid).child('chat_file/${basename(file.path)}');
-
-    //uploading image
-    await ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-        .then((p0) {
-      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    final ref = firestore
+        .collection('messages')
+        .doc(chat.id)
+        .collection("my_messages")
+        .doc(message.id);
+    await ref.set(message.toJson()).then((value) {
+      sendPushNotification(
+          chat.users.firstWhere((element) => element.id != me.id),
+          type == MessageType.text ? (msg ?? "") : 'image');
     });
-
-    final fileUrl = await ref.getDownloadURL();
-
-    FileModel uploadFile = FileModel(name: basename(file.path), url: fileUrl);
-
-    //updating image in firestore database
-    await sendMessage(chat, fileType(ext), file: uploadFile);
-  }
-
-  static MessageType fileType(String ext) {
-    switch (ext.toLowerCase()) {
-      case "jpeg":
-        return MessageType.image;
-      case "jpg":
-        return MessageType.image;
-      case "png":
-        return MessageType.image;
-      case "mp4":
-        return MessageType.video;
-      case "mp3":
-        return MessageType.audio;
-      case "pdf":
-        return MessageType.pdf;
-
-      default:
-        return MessageType.text;
-    }
   }
 
   // for getting firebase messaging token

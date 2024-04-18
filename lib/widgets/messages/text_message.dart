@@ -5,19 +5,13 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 
 class TextMessage extends StatelessWidget {
-  const TextMessage({
-    super.key,
-    this.message,
-  });
+  const TextMessage({super.key, this.message});
 
   final MessageModels? message;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: MediaQuery.of(context).platformBrightness == Brightness.dark
-      //     ? Colors.white
-      //     : Colors.black,
       padding: const EdgeInsets.symmetric(
         horizontal: kDefaultPadding * 0.75,
         vertical: kDefaultPadding / 2,

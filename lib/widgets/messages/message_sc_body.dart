@@ -5,6 +5,7 @@ import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/widgets/messages/upload_message.dart';
 
 import 'chat_input_field.dart';
 import 'message.dart';
@@ -41,6 +42,16 @@ class MessageScreenBody extends StatelessWidget {
                 }
                 return Container();
               }),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+              child: UploadMessage(),
+            ),
+          ],
         ),
         ChatInputField(chat: chat),
       ],
