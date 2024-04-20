@@ -26,14 +26,15 @@ class FileController extends GetxController {
   }
 
   static Rx<MessageType> uploadFileType = MessageType.text.obs;
-  static RxDouble downloadIndecator = 0.0.obs;
+  static RxDouble uploadIndecator = 0.0.obs;
+  static RxString filename = "".obs;
 
   //send chat File
   static Future<void> uploadChatFile(ChatModel chat, File file) async {
-    downloadIndecator = 0.1.obs;
+    filename.value = basename(file.path);
+    uploadIndecator = 0.1.obs;
     //getting image file extension
     final ext = file.path.split('.').last;
-
     uploadFileType.value = fileType(ext);
 
     //storage file ref with path
@@ -46,11 +47,11 @@ class FileController extends GetxController {
         .putFile(file, SettableMetadata(contentType: 'image/$ext'))
         .snapshotEvents
         .listen((data) {
-      downloadIndecator.value = data.bytesTransferred / data.totalBytes;
+      uploadIndecator.value = data.bytesTransferred / data.totalBytes;
       log('Data Transferred: ${data.bytesTransferred / data.totalBytes} kb');
     });
 
-    final fileUrl = await ref.getDownloadURL();
+    String fileUrl = await ref.getDownloadURL();
 
     FileModel uploadFile = FileModel(
       name: basename(file.path),
@@ -58,7 +59,6 @@ class FileController extends GetxController {
       fromAdress: file.path,
     );
     uploadFileType.value = MessageType.text;
-
     //updating image in firestore database
     await FirebaseController.sendMessage(chat, fileType(ext), file: uploadFile);
   }
@@ -85,7 +85,7 @@ class FileController extends GetxController {
 
   static Future downloadFile(
       MessageModels msg, RxDouble progressIndecator) async {
-    progressIndecator.value = 0.2;
+    progressIndecator.value = 0.1;
     final path = await DirectoryPath.getPath();
     var savePath = '$path/${msg.file!.name}';
     var dio = Dio();

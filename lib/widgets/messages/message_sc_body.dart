@@ -43,14 +43,11 @@ class MessageScreenBody extends StatelessWidget {
                 return Container();
               }),
         ),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
-              child: UploadMessage(),
-            ),
+            UploadMessage(),
+          
           ],
         ),
         ChatInputField(chat: chat),

@@ -24,9 +24,9 @@ class _PDFMessageState extends State<PDFMessage> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.45, // 45% of total width
+      width: MediaQuery.of(context).size.width * 0.7, // 45% of total width
       child: AspectRatio(
-        aspectRatio: 3.5,
+        aspectRatio: 4.5,
         child: GestureDetector(
           onTap: () async {
             if (widget.message.fromId != FirebaseController.me.id) {
@@ -48,22 +48,26 @@ class _PDFMessageState extends State<PDFMessage> {
                 children: [
                   (widget.message.fromId != FirebaseController.me.id &&
                           widget.message.file!.dwnUrl == null)
-                      ? SizedBox(
-                          height: 30,
-                          width: 30,
+                      ? Container(
+                          height: 35,
+                          width: 35,
+                          margin: const EdgeInsets.only(left: 5),
                           child: CircularProgressWidget(
                             isUpload: false,
                             progressValue: downloadIndecator.value,
-                            widthBorder: 4,
-                            iconSize: 18,
+                            widthBorder: 5,
+                            iconSize: 20,
                           ),
                         )
                       : Image.asset("assets/images/icon_pdf.png"),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "  ${widget.message.file!.name}",
-                      maxLines: 1,
+                      widget.message.file!.name,
+                      maxLines: 2,
+                      textAlign: TextAlign.start,
                       style: const TextStyle(
+                        height: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

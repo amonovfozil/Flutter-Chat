@@ -9,7 +9,10 @@ class UnDownloadFIleView extends StatelessWidget {
   final bool isUpload;
   final double progressIndecator;
   const UnDownloadFIleView(
-      {super.key, required this.isVisible,required this.isUpload, required this.progressIndecator});
+      {super.key,
+      required this.isVisible,
+      required this.isUpload,
+      required this.progressIndecator});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +36,7 @@ class UnDownloadFIleView extends StatelessWidget {
                 color:
                     Theme.of(context).scaffoldBackgroundColor.withOpacity(0.4)),
             child: CircularProgressWidget(
-                    isUpload:true,
-
+              isUpload: isUpload,
               progressValue: progressIndecator,
             ),
           ),

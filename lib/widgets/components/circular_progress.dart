@@ -37,7 +37,9 @@ class CircularProgressWidget extends StatelessWidget {
             size: iconSize ?? 20,
             color: progressValue == 100
                 ? kPrimaryColor
-                : Theme.of(context).iconTheme.color,
+                : isUpload
+                    ? kPrimaryColor
+                    : Theme.of(context).iconTheme.color!.withOpacity(0.5),
           ),
         ],
       ),

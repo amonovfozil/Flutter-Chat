@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
+import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/widgets/components/undownload_file_view.dart';
 import 'package:get/get.dart';
 
@@ -36,13 +37,21 @@ class _ImageMessageState extends State<ImageMessage> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                Container(
+                  width: Get.width,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: kBorderColor.withOpacity(0.5),
+                      strokeAlign: BorderSide.strokeAlignOutside,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: (FileController.getMessageFileUrl(widget.message)
                           .startsWith("https://"))
                       ? FadeInImage(
                           image: NetworkImage(
-                            widget.message.file!.url,
+                            FileController.getMessageFileUrl(widget.message),
                             scale: 1.0,
                           ),
                           placeholder: const AssetImage(
@@ -53,7 +62,6 @@ class _ImageMessageState extends State<ImageMessage> {
                           fit: BoxFit.cover,
                         )
                       : Image.file(
-                          width: Get.width,
                           File(
                               FileController.getMessageFileUrl(widget.message)),
                           fit: BoxFit.cover,
