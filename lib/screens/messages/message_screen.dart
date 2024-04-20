@@ -16,7 +16,7 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body:  MessageScreenBody(chat :chat),
+      body: MessageScreenBody(chat: chat),
     );
   }
 
@@ -43,23 +43,29 @@ class MessagesScreen extends StatelessWidget {
                   img: chatUser.image,
                 ),
                 const SizedBox(width: kDefaultPadding * 0.75),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      chatUser.name.value,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      chatUser.isOnline
-                          ? "online"
-                          : MyDateUtil.getLastActiveTime(
-                              context: context,
-                              lastActive: chatUser.lastActive,
-                            ),
-                      style: const TextStyle(fontSize: 12),
-                    )
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chatUser.name.value,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        chatUser.isOnline
+                            ? "online"
+                            : MyDateUtil.getLastActiveTime(
+                                context: context,
+                                lastActive: chatUser.lastActive,
+                              ),
+                        style: const TextStyle(fontSize: 12),
+                      )
+                    ],
+                  ),
                 )
               ],
             );

@@ -16,6 +16,8 @@ class Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseController.updateMessageReadStatus(message);
+
     Widget messageContaint(MessageModels message) {
       switch (message.type) {
         case MessageType.text:
@@ -23,7 +25,9 @@ class Message extends StatelessWidget {
         case MessageType.audio:
           return AudioMessage(message: message);
         case MessageType.video:
-          return const VideoMessage();
+          return VideoMessage(
+            message: message,
+          );
         case MessageType.image:
           return ImageMessage(message: message);
         case MessageType.pdf:

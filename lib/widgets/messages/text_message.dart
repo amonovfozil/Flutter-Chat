@@ -1,7 +1,7 @@
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_chat/utils/helper/my_date_util.dart';
 
 import '../../utils/constants.dart';
 
@@ -36,7 +36,7 @@ class TextMessage extends StatelessWidget {
           alignment: Alignment.bottomRight,
           children: [
             Text(
-              "${message!.msg!}           ",
+              "${message!.msg!}               ",
               style: TextStyle(
                 height: 1.4,
                 color: message?.fromId == FirebaseController.me.id
@@ -44,19 +44,9 @@ class TextMessage extends StatelessWidget {
                     : Theme.of(context).textTheme.bodyLarge!.color,
               ),
             ),
-            Text(
-              DateFormat.Hm().format(
-                DateTime.fromMillisecondsSinceEpoch(
-                  message!.sendTime.millisecondsSinceEpoch,
-                ),
-              ),
-              style: TextStyle(
-                height: 1,
-                fontSize: 12,
-                color: message?.fromId == FirebaseController.me.id
-                    ? Colors.white
-                    : Theme.of(context).textTheme.bodyLarge!.color,
-              ),
+            MyDateUtil.getFormattedTime(
+              context: context,
+              message: message!,
             ),
           ],
         ));

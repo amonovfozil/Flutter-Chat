@@ -299,10 +299,16 @@ class FirebaseController extends GetxController {
 
   //update read status of message
   static Future<void> updateMessageReadStatus(MessageModels message) async {
-    firestore
-        .collection('chats/${getConversationID(message.fromId)}/messages/')
-        .doc(message.sendTime.millisecondsSinceEpoch.toString())
-        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+    if (FirebaseController.me.id != message.fromId) {
+      firestore
+          .collection('messages')
+          .doc(message.chatId)
+          .collection("my_messages")
+          .doc(message.id)
+          .update({
+        'status': MessageStatus.viewed.toString(),
+      });
+    }
   }
 
   //get only last message of a specific chat

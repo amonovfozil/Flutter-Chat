@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/constants.dart';
+import 'package:flutter_chat/utils/helper/my_date_util.dart';
 import 'package:flutter_chat/widgets/components/undownload_file_view.dart';
 import 'package:get/get.dart';
 
@@ -25,8 +24,8 @@ class _ImageMessageState extends State<ImageMessage> {
     return Obx(
       () => GestureDetector(
         onTap: () {
-          if (widget.message.fromId != FirebaseController.me.id &&
-              widget.message.file!.dwnUrl == null) {
+          if (FileController.getMessageFileUrl(widget.message)
+              .startsWith("https://")) {
             FileController.downloadFile(widget.message, downloadIndecator);
           }
         },
@@ -63,7 +62,8 @@ class _ImageMessageState extends State<ImageMessage> {
                         )
                       : Image.file(
                           File(
-                              FileController.getMessageFileUrl(widget.message)),
+                            FileController.getMessageFileUrl(widget.message),
+                          ),
                           fit: BoxFit.cover,
                         ),
                 ),
@@ -73,7 +73,23 @@ class _ImageMessageState extends State<ImageMessage> {
                       (widget.message.fromId != FirebaseController.me.id &&
                           widget.message.file!.dwnUrl == null),
                   progressIndecator: downloadIndecator.value,
-                )
+                ),
+                Positioned(
+                  bottom: 2.5,
+                  right: 2.5,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    child: MyDateUtil.getFormattedTime(
+                      context: context,
+                      message: widget.message,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

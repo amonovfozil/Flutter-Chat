@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class DirectoryPath {
-  static getPath() async {
+  static Future<String> getPath() async {
     Directory? dir;
     dir = await getApplicationDocumentsDirectory();
 

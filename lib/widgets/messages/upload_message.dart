@@ -26,7 +26,7 @@ class _UploadMessageState extends State<UploadMessage> {
       child: Obx(() {
         switch (FileController.uploadFileType.value) {
           //  image message
-          case MessageType.image:
+          case MessageType.image || MessageType.video:
             return SizedBox(
               width: MediaQuery.of(context).size.width *
                   0.45, // 45% of total width
@@ -46,10 +46,10 @@ class _UploadMessageState extends State<UploadMessage> {
             );
           case MessageType.pdf:
             return SizedBox(
-              width: MediaQuery.of(context).size.width *
-                  0.45, // 45% of total width
+              width:
+                  MediaQuery.of(context).size.width * 0.7, // 45% of total width
               child: AspectRatio(
-                aspectRatio: 3.5,
+                aspectRatio: 5,
                 child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -58,14 +58,15 @@ class _UploadMessageState extends State<UploadMessage> {
                     ),
                     child: Row(
                       children: [
+                        const SizedBox(width: 5),
                         SizedBox(
-                          height: 30,
-                          width: 30,
+                          height: 35,
+                          width: 35,
                           child: CircularProgressWidget(
                             isUpload: true,
                             progressValue: FileController.uploadIndecator.value,
-                            widthBorder: 4,
-                            iconSize: 18,
+                            widthBorder: 5,
+                            iconSize: 20,
                           ),
                         ),
                         Expanded(
@@ -81,8 +82,49 @@ class _UploadMessageState extends State<UploadMessage> {
                     )),
               ),
             );
-          // case MessageType.audio:
-          //   return AudioMessage(message: message);
+          case MessageType.audio:
+            return Container(
+              width: MediaQuery.of(context).size.width * 0.7,
+              padding: const EdgeInsets.symmetric(
+                horizontal: kDefaultPadding * 0.75,
+                // vertical: kDefaultPadding / 2.5,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: kBorderColor.withOpacity(0.5),
+              ),
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: 30,
+                    width: 30,
+                    child: CircularProgressWidget(
+                      isUpload: true,
+                      progressValue: FileController.uploadIndecator.value,
+                      widthBorder: 4,
+                      iconSize: 15,
+                    ),
+                  ),
+                  Expanded(
+                    child: SliderTheme(
+                      data: const SliderThemeData(
+                        thumbShape:
+                            RoundSliderThumbShape(enabledThumbRadius: 6),
+                        trackHeight: 3,
+                      ),
+                      child: Slider(
+                        value: 0,
+                        onChanged: (value) {},
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    "0.37",
+                    style: TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ],
+              ),
+            );
           // case MessageType.video:
           //   return const VideoMessage();
           // case MessageType.text:
@@ -92,12 +134,7 @@ class _UploadMessageState extends State<UploadMessage> {
           //     color: Colors.amber,
           //   );
           default:
-            return Container(
-                // color: Colors.amber,
-                // width: MediaQuery.of(context).size.width * 0.45,
-                // // 45% of total width
-                // child: AspectRatio(aspectRatio: 1.6, child: Container()),
-                );
+            return Container();
         }
       }),
     );

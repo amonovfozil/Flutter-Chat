@@ -12,17 +12,37 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 
 class FileController extends GetxController {
-  final player = AudioPlayer();
-  RxString playAudioId = "".obs;
+  static final player = AudioPlayer();
+  static RxString playAudioId = "".obs;
+  static Rx<Duration> duration = const Duration(seconds: 0).obs;
+  static Rx<Duration> posetion = const Duration(seconds: 0).obs;
 
-  play(MessageModels message) async {
+  static Future<void> play(MessageModels message) async {
     player.pause();
     if (message.id != playAudioId.value) {
-      player.play(UrlSource(message.file!.url));
+      player.play(
+          FileController.getMessageFileUrl(message).startsWith("https://")
+              ? UrlSource(FileController.getMessageFileUrl(message))
+              : DeviceFileSource(FileController.getMessageFileUrl(message)));
       playAudioId.value = message.id;
     } else {
       playAudioId.value = "";
     }
+    FileController.player.onDurationChanged.listen(
+      (value) {
+        duration.value = value;
+      },
+    );
+    FileController.player.onPositionChanged.listen(
+      (value) {
+        posetion.value = value;
+      },
+    );
+   
+  }
+
+  static String durationToString(Duration duration) {
+    return duration.toString().split(".")[0].substring(0);
   }
 
   static Rx<MessageType> uploadFileType = MessageType.text.obs;
@@ -40,11 +60,14 @@ class FileController extends GetxController {
     //storage file ref with path
     final ref = FirebaseController.storage
         .ref(FirebaseController.user.uid)
-        .child('chat_file/${basename(file.path)}');
+        .child('chat_file}');
 
     //uploading image
     ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .putFile(
+          file,
+          SettableMetadata(contentType: basename(file.path)),
+        )
         .snapshotEvents
         .listen((data) {
       uploadIndecator.value = data.bytesTransferred / data.totalBytes;
@@ -113,6 +136,7 @@ class FileController extends GetxController {
 
       log("DOWNLOAD URL ${msg.file!.dwnUrl}");
       await raf.close();
+      progressIndecator.value = 0.0;
     } catch (e) {
       log(e.toString());
     }

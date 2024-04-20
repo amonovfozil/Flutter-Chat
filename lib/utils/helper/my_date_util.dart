@@ -1,11 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/models/chat_message.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class MyDateUtil {
   // for getting formatted time from milliSecondsSinceEpochs String
-  static String getFormattedTime(
-      {required BuildContext context, required String time}) {
-    final date = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
-    return TimeOfDay.fromDateTime(date).format(context);
+  static Widget getFormattedTime(
+      {required BuildContext context, required MessageModels message}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          DateFormat.Hm().format(
+            DateTime.fromMillisecondsSinceEpoch(
+              message.sendTime.millisecondsSinceEpoch,
+            ),
+          ),
+          style: const TextStyle(
+            height: 1.5,
+            fontSize: 10,
+          ),
+        ),
+        const SizedBox(width: 5),
+        if (message.fromId == FirebaseController.me.id)
+          Icon(
+            message.status == MessageStatus.viewed
+                ? Icons.done_all
+                : Icons.done,
+            size: 15,
+          )
+      ],
+    );
+  }
+
+  // for getting formatted Day from milliSecondsSinceEpochs String
+
+  static String getFormattedDay(String dateValue) {
+    List dateData =
+        List.from(dateValue.split("-").map((e) => int.parse(e)).toList());
+    DateTime date = DateTime(dateData[0], dateData[1], dateData[2]);
+    DateTime today = DateTime.now();
+    String formattedDate;
+    if (date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day) {
+      // same day
+      formattedDate = "${'Today'.tr}, ${DateFormat.MMMMd().format(date)}";
+    } else if (date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day - 1) {
+      formattedDate = "${"Yesterday".tr}, ${DateFormat.MMMMd().format(date)}";
+    } else {
+      formattedDate = DateFormat.MMMMd().format(date);
+    }
+
+    return formattedDate;
   }
 
   // for getting formatted time for sent & read
