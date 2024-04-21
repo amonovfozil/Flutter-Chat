@@ -4,9 +4,9 @@ import 'package:flutter_chat/models/user_models.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/components/circle_image.dart';
+import 'package:flutter_chat/screens/components/circle_image.dart';
 
-import '../../widgets/messages/message_sc_body.dart';
+import 'widgets/message_sc_body.dart';
 
 class MessagesScreen extends StatelessWidget {
   final ChatModel chat;

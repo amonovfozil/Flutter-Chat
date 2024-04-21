@@ -6,7 +6,7 @@ import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/messages/upload_message.dart';
+import 'package:flutter_chat/screens/messages/widgets/upload_message.dart';
 import 'package:grouped_list/grouped_list.dart';
 
 import 'chat_input_field.dart';

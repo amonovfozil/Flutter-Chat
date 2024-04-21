@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:flutter_chat/utils/constants.dart';
-import 'package:flutter_chat/widgets/chats/user_card.dart';
+import 'package:flutter_chat/screens/chats/widgets/user_card.dart';
 import 'package:get/get.dart';
 
 class ContactScreen extends StatefulWidget {

@@ -9,7 +9,7 @@ import 'package:flutter_chat/models/chat_models.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class ChatInputField extends StatefulWidget {
   final ChatModel chat;

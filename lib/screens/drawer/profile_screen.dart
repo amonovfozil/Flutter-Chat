@@ -6,7 +6,7 @@ import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/main.dart';
 import 'package:flutter_chat/screens/drawer/contact_screen.dart';
 import 'package:flutter_chat/utils/constants.dart';
-import 'package:flutter_chat/widgets/components/circle_image.dart';
+import 'package:flutter_chat/screens/components/circle_image.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';

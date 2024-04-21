@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/widgets/components/circular_progress.dart';
+import 'package:flutter_chat/screens/components/circular_progress.dart';
 import 'package:get/get.dart';
 
 class UnDownloadFIleView extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class TextMessage extends StatelessWidget {
   const TextMessage({super.key, this.message});

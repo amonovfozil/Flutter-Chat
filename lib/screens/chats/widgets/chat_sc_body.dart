@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
-import 'package:flutter_chat/widgets/components/chat_card.dart';
+import 'package:flutter_chat/screens/components/chat_card.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/screens/messages/message_screen.dart';
 import 'package:flutter/material.dart';

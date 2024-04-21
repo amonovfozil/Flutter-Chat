@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/components/circle_image.dart';
+import 'package:flutter_chat/screens/components/circle_image.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class UserCard extends StatelessWidget {
   const UserCard({

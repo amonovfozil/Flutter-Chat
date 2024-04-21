@@ -6,7 +6,7 @@ import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/components/undownload_file_view.dart';
+import 'package:flutter_chat/screens/components/undownload_file_view.dart';
 import 'package:get/get.dart';
 
 class ImageMessage extends StatefulWidget {

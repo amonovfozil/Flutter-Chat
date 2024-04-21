@@ -5,11 +5,11 @@ import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/components/circular_progress.dart';
+import 'package:flutter_chat/screens/components/circular_progress.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class PDFMessage extends StatefulWidget {
   final MessageModels message;

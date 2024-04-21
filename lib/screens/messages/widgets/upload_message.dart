@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/constants.dart';
-import 'package:flutter_chat/widgets/components/circular_progress.dart';
-import 'package:flutter_chat/widgets/components/undownload_file_view.dart';
+import 'package:flutter_chat/screens/components/circular_progress.dart';
+import 'package:flutter_chat/screens/components/undownload_file_view.dart';
 import 'package:get/get.dart';
 
 class UploadMessage extends StatefulWidget {

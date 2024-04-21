@@ -3,11 +3,11 @@ import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/components/undownload_file_view.dart';
-import 'package:flutter_chat/widgets/messages/play_video_screen.dart';
+import 'package:flutter_chat/screens/components/undownload_file_view.dart';
+import 'package:flutter_chat/screens/messages/widgets/play_video_screen.dart';
 import 'package:get/get.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class VideoMessage extends StatefulWidget {
   final MessageModels message;

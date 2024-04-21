@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/screens/chats/chats_screen.dart';
 import 'package:flutter_chat/screens/drawer/profile_screen.dart';
-import 'package:flutter_chat/widgets/components/circle_image.dart';
+import 'package:flutter_chat/screens/components/circle_image.dart';
 import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {

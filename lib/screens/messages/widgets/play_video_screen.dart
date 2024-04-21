@@ -6,7 +6,7 @@ import 'package:flutter_chat/models/chat_message.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class PlayVideoScreen extends StatefulWidget {
   final MessageModels message;

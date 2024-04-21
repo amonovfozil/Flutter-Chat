@@ -3,11 +3,11 @@ import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
-import 'package:flutter_chat/widgets/components/circular_progress.dart';
+import 'package:flutter_chat/screens/components/circular_progress.dart';
 import 'package:get/get.dart';
 // import 'package:just_audio/just_audio.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 
 class AudioMessage extends StatefulWidget {
   final MessageModels message;

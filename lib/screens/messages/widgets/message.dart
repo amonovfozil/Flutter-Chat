@@ -1,10 +1,10 @@
 import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/widgets/messages/image_message.dart';
-import 'package:flutter_chat/widgets/messages/pdf_message.dart';
+import 'package:flutter_chat/screens/messages/widgets/image_message.dart';
+import 'package:flutter_chat/screens/messages/widgets/pdf_message.dart';
 
-import '../../utils/constants.dart';
+import '../../../utils/constants.dart';
 import 'audio_message.dart';
 import 'text_message.dart';
 import 'video_message.dart';

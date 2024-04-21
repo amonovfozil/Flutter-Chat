@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat/logic/authentication/sign_controller.dart';
-import 'package:flutter_chat/widgets/components/custom_text_field.dart';
-import 'package:flutter_chat/widgets/components/primary_button.dart';
+import 'package:flutter_chat/screens/components/custom_text_field.dart';
+import 'package:flutter_chat/screens/components/primary_button.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

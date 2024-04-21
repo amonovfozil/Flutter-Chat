@@ -4,7 +4,7 @@ import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../widgets/chats/chat_sc_body.dart';
+import 'widgets/chat_sc_body.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
