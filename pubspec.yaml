@@ -48,6 +48,8 @@ dependencies:
   open_file: ^3.3.2
   grouped_list: ^5.1.2
   video_player: ^2.8.6
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
   # just_audio: ^0.9.37”
   # cached_network_image: ^3.3.1
  
@@ -56,12 +58,23 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^3.0.0
+#splash screen
+flutter_native_splash:
+  color: "#1D1D35"
+  image: dev_assets/splash_dark.png
+  android_12:
+    image: dev_assets/splash_dark.png
+
+#splash screen
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "dev_assets/logo_max.png"
+  remove_alpha_ios: true
+
+
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,6 +89,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - dev_assets/
     - assets/images/
     - assets/icons/
 

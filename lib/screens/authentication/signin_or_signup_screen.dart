@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat/logic/authentication/sign_controller.dart';
+import 'package:flutter_chat/main.dart';
 import 'package:flutter_chat/screens/components/custom_text_field.dart';
 import 'package:flutter_chat/screens/components/primary_button.dart';
 import 'package:flutter_chat/utils/constants.dart';
@@ -29,10 +30,10 @@ class _SigninOrSignupScreenState extends State<SignScreen> {
               children: [
                 const Spacer(flex: 2),
                 Image.asset(
-                  MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? "assets/images/Logo_light.png"
-                      : "assets/images/Logo_dark.png",
-                  height: 146,
+                  theme.value == ThemeMode.light
+                      ? "dev_assets/light.gif"
+                      : "dev_assets/dark.gif",
+                  height: 250,
                 ),
                 const Spacer(),
                 // PrimaryButton(
