@@ -1,24 +1,25 @@
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/screens/messages/widgets/image_message.dart';
-import 'package:flutter_chat/screens/messages/widgets/pdf_message.dart';
+import 'package:flutter_chat/screens/messages/message_type/image_message.dart';
+import 'package:flutter_chat/screens/messages/message_type/pdf_message.dart';
+
 
 import '../../../utils/constants.dart';
-import 'audio_message.dart';
-import 'text_message.dart';
-import 'video_message.dart';
+import '../message_type/audio_message.dart';
+import '../message_type/text_message.dart';
+import '../message_type/video_message.dart';
 
 class Message extends StatelessWidget {
   const Message({super.key, required this.message});
 
-  final MessageModels message;
+  final MessageModel message;
 
   @override
   Widget build(BuildContext context) {
-    FirebaseController.updateMessageReadStatus(message);
+    FirebaseAPI.updateMessageReadStatus(message);
 
-    Widget messageContaint(MessageModels message) {
+    Widget messageContaint(MessageModel message) {
       switch (message.type) {
         case MessageType.text:
           return TextMessage(message: message);
@@ -38,7 +39,7 @@ class Message extends StatelessWidget {
     }
 
     return StreamBuilder(
-        stream: FirebaseController.streamAllContact(),
+        stream: FirebaseAPI.streamAllContact(),
         builder: (context, snapshot) {
           // UserModel user = FirebaseController.contacts
           //     .lastWhere((element) => element.id == message.fromId);
@@ -51,7 +52,7 @@ class Message extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(top: kDefaultPadding / 3),
             child: Row(
-              mainAxisAlignment: message.fromId == FirebaseController.me.id
+              mainAxisAlignment: message.fromId == FirebaseAPI.me.id
                   ? MainAxisAlignment.end
                   : MainAxisAlignment.start,
               children: [
@@ -63,7 +64,12 @@ class Message extends StatelessWidget {
                 //   const SizedBox(width: kDefaultPadding / 2),
                 // ],
 
-                messageContaint(message),
+                GestureDetector(
+                  onLongPress: () {
+                    
+                  },
+                  child: messageContaint(message),
+                ),
                 // if (message.fromId == FirebaseController.me.id)
                 //   MessageStatusDot(status: message.status)
               ],

@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/models/chat_message.dart';
@@ -24,13 +24,13 @@ class MessageScreenBody extends StatelessWidget {
         Expanded(
           child: Builder(builder: (context) {
             return StreamBuilder(
-                stream: FirebaseController.getChatMessages(chat.id),
+                stream: FirebaseAPI.getChatMessages(chat.id),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                     log("MESSAGE ${snapshot.data!.docs}");
                     log("MESSAGE text ${snapshot.data!.docs.first.data()}");
-                    List<MessageModels> messages = List.from(snapshot.data!.docs
-                        .map((e) => MessageModels.fromJson(e.data()))
+                    List<MessageModel> messages = List.from(snapshot.data!.docs
+                        .map((e) => MessageModel.fromJson(e.data()))
                         .toList());
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -56,7 +56,7 @@ class MessageScreenBody extends StatelessWidget {
                         ),
 
                         indexedItemBuilder:
-                            (context, MessageModels element, int index) {
+                            (context, MessageModel element, int index) {
                           return Message(message: messages[index]);
                         },
                       ),

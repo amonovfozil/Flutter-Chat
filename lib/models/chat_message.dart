@@ -20,12 +20,12 @@ const _statusMap = {
   'MessageStatus.viewed': MessageStatus.viewed,
 };
 
-MessageModels messageFromJson(String str) =>
-    MessageModels.fromJson(json.decode(str));
+MessageModel messageFromJson(String str) =>
+    MessageModel.fromJson(json.decode(str));
 
-String messageToJson(MessageModels data) => json.encode(data.toJson());
+String messageToJson(MessageModel data) => json.encode(data.toJson());
 
-class MessageModels {
+class MessageModel {
   String id;
   String chatId;
   String? msg;
@@ -36,7 +36,7 @@ class MessageModels {
   Timestamp sendTime;
   // final bool isSender;
 
-  MessageModels({
+  MessageModel({
     required this.id,
     required this.chatId,
     this.msg = "",
@@ -47,7 +47,7 @@ class MessageModels {
     required this.sendTime,
   });
 
-  factory MessageModels.fromJson(Map<String, dynamic> json) => MessageModels(
+  factory MessageModel.fromJson(Map<String, dynamic> json) => MessageModel(
         id: json["id"],
         chatId: json["chat_id"],
         msg: json['msg'].toString(),

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/main.dart';
 import 'package:flutter_chat/screens/drawer/contact_screen.dart';
 import 'package:flutter_chat/utils/constants.dart';
@@ -41,8 +41,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                FirebaseController.auth.signOut();
-                FirebaseController.updateActiveStatus(false);
+                FirebaseAPI.auth.signOut();
+                FirebaseAPI.updateActiveStatus(false);
               },
               icon: const Icon(
                 Icons.logout,
@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return [
                   PopupMenuItem(
                     onTap: () {
-                      FirebaseController.auth.currentUser!.delete();
+                      FirebaseAPI.auth.currentUser!.delete();
                     },
                     child: const Row(
                       children: [
@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Row(
                           children: [
                             CircleImage(
-                              img: FirebaseController.me.image,
+                              img: FirebaseAPI.me.image,
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    FirebaseController.me.name.value,
+                                    FirebaseAPI.me.name.value,
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500),
@@ -130,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         opacity: 0.8,
                                         child: Text(
                                           DateFormat("d.MM.y").format(
-                                              DateTime.parse(FirebaseController
+                                              DateTime.parse(FirebaseAPI
                                                   .me.createdAt)),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -268,7 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () async {
                 image = await picker.pickImage(source: ImageSource.camera);
                 if (image != null) {
-                  FirebaseController.updateProfilePicture(File(image!.path));
+                  FirebaseAPI.updateProfilePicture(File(image!.path));
                   Get.back();
                 }
               },
@@ -289,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () async {
                 image = await picker.pickImage(source: ImageSource.gallery);
                 if (image != null) {
-                  FirebaseController.updateProfilePicture(File(image!.path));
+                  FirebaseAPI.updateProfilePicture(File(image!.path));
                   Get.back();
                 }
               },

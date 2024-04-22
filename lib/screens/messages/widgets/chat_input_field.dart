@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/chats/file_controller.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:get/get.dart';
@@ -82,7 +82,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                           ? IconButton(
                               onPressed: () {
                                 if (textContr.text.trim().isNotEmpty) {
-                                  FirebaseController.sendMessage(
+                                  FirebaseAPI.sendMessage(
                                     widget.chat,
                                     MessageType.text,
                                     msg: textContr.text,

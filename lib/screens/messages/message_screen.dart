@@ -1,4 +1,4 @@
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:flutter_chat/utils/constants.dart';
@@ -24,14 +24,14 @@ class MessagesScreen extends StatelessWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       title: StreamBuilder(
-          stream: FirebaseController.streamAllContact(),
+          stream: FirebaseAPI.streamAllContact(),
           builder: (context, snapshot) {
             UserModel chatUser = chat.users.firstWhere(
-                (element) => element.id != FirebaseController.me.id);
+                (element) => element.id != FirebaseAPI.me.id);
             if (snapshot.hasData) {
               chatUser = UserModel.fromJson(snapshot.data!.docs
                   .firstWhere((element) =>
-                      element.data()["id"] != FirebaseController.me.id &&
+                      element.data()["id"] != FirebaseAPI.me.id &&
                       chat.users.any((user) => user.id == element.data()["id"]))
                   .data());
             }

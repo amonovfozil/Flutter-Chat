@@ -9,7 +9,7 @@ import 'package:video_player/video_player.dart';
 import '../../../utils/constants.dart';
 
 class PlayVideoScreen extends StatefulWidget {
-  final MessageModels message;
+  final MessageModel message;
 
   const PlayVideoScreen({super.key, required this.message});
 
@@ -121,7 +121,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                       ),
                     ),
                     Text(
-                      "${FileController.durationToString(position.value)} / ${FileController.durationToString(position.value)}",
+                      "${FileController.durationToString(position.value, false)} / ${FileController.durationToString(position.value, false)}",
                       style: const TextStyle(
                         fontSize: 10,
                       ),

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/logic/chats/file_controller.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
 import 'package:flutter_chat/screens/components/circular_progress.dart';
@@ -12,7 +12,7 @@ import 'package:open_file/open_file.dart';
 import '../../../utils/constants.dart';
 
 class PDFMessage extends StatefulWidget {
-  final MessageModels message;
+  final MessageModel message;
   const PDFMessage({super.key, required this.message});
 
   @override
@@ -34,9 +34,9 @@ class _PDFMessageState extends State<PDFMessage> {
           children: [
             GestureDetector(
               onTap: () async {
-                if (widget.message.fromId == FirebaseController.me.id) {
+                if (widget.message.fromId == FirebaseAPI.me.id) {
                   await OpenFile.open(widget.message.file!.fromAdress);
-                } else if ((widget.message.fromId != FirebaseController.me.id &&
+                } else if ((widget.message.fromId != FirebaseAPI.me.id &&
                     widget.message.file!.dwnUrl == null)) {
                   FileController.downloadFile(
                       widget.message, downloadIndecator);
@@ -52,7 +52,7 @@ class _PDFMessageState extends State<PDFMessage> {
                 ),
                 child: Row(
                   children: [
-                    (widget.message.fromId != FirebaseController.me.id &&
+                    (widget.message.fromId != FirebaseAPI.me.id &&
                             widget.message.file!.dwnUrl == null)
                         ? Obx(
                             () => Container(

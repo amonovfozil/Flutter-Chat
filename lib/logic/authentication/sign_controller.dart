@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/utils/helper/message_alert.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -24,13 +24,13 @@ class Signcontroller extends GetxController {
           email: mailContrl.text,
           password: passwordContrl.text,
         );
-        FirebaseController.createUser();
+        FirebaseAPI.createUser();
       } else {
         await _firebaseAuth.signInWithEmailAndPassword(
           email: mailContrl.text,
           password: passwordContrl.text,
         );
-        FirebaseController.getSelfInfo();
+        FirebaseAPI.getSelfInfo();
       }
     } on FirebaseAuthException catch (e) {
       log("Firebasesign  Error ${e.code}");

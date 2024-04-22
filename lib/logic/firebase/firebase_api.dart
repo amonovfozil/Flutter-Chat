@@ -15,7 +15,7 @@ import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:get/get.dart';
 
-class FirebaseController extends GetxController {
+class FirebaseAPI {
   static Dio dio = Dio();
 
   // Authentication
@@ -57,7 +57,7 @@ class FirebaseController extends GetxController {
         await getFirebaseMessagingToken();
 
         //for setting user status to active
-        FirebaseController.updateActiveStatus(true);
+        FirebaseAPI.updateActiveStatus(true);
         log('My Data: ${user.data()}');
         getAllContact();
       } else {
@@ -203,7 +203,7 @@ class FirebaseController extends GetxController {
     final time = Timestamp.now();
 
     //message to send
-    final MessageModels message = MessageModels(
+    final MessageModel message = MessageModel(
       id: UniqueKey().toString(),
       chatId: chat.id,
       msg: msg,
@@ -298,8 +298,8 @@ class FirebaseController extends GetxController {
   // }
 
   //update read status of message
-  static Future<void> updateMessageReadStatus(MessageModels message) async {
-    if (FirebaseController.me.id != message.fromId) {
+  static Future<void> updateMessageReadStatus(MessageModel message) async {
+    if (FirebaseAPI.me.id != message.fromId) {
       firestore
           .collection('messages')
           .doc(message.chatId)
@@ -322,7 +322,7 @@ class FirebaseController extends GetxController {
   }
 
   //delete message
-  static Future<void> deleteMessage(MessageModels message) async {
+  static Future<void> deleteMessage(MessageModel message) async {
     await firestore
         .collection('chats/${getConversationID(message.id)}/messages/')
         .doc(message.sendTime.millisecondsSinceEpoch.toString())
@@ -335,7 +335,7 @@ class FirebaseController extends GetxController {
 
   //update message
   static Future<void> updateMessage(
-      MessageModels message, String updatedMsg) async {
+      MessageModel message, String updatedMsg) async {
     await firestore
         .collection('chats/${getConversationID(message.id)}/messages/')
         .doc(message.sendTime.millisecondsSinceEpoch.toString())

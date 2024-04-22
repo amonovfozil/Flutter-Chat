@@ -1,4 +1,4 @@
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/models/user_models.dart';
@@ -20,16 +20,16 @@ class ChatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserModel chatUser = chat.users
-        .firstWhere((element) => element.id != FirebaseController.me.id);
+        .firstWhere((element) => element.id != FirebaseAPI.me.id);
     return InkWell(
       onTap: press,
       child: StreamBuilder(
-          stream: FirebaseController.streamAllContact(),
+          stream: FirebaseAPI.streamAllContact(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               chatUser = UserModel.fromJson(snapshot.data!.docs
                   .firstWhere((element) =>
-                      element.data()["id"] != FirebaseController.me.id &&
+                      element.data()["id"] != FirebaseAPI.me.id &&
                       chat.users.any((user) => user.id == element.data()["id"]))
                   .data());
               return Padding(

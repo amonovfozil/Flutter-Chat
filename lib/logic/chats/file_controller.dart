@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/utils/helper/directory_path.dart';
@@ -12,12 +12,13 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 
 class FileController extends GetxController {
+  // audio message
   static final player = AudioPlayer();
   static RxString playAudioId = "".obs;
   static Rx<Duration> duration = const Duration(seconds: 0).obs;
   static Rx<Duration> posetion = const Duration(seconds: 0).obs;
 
-  static Future<void> play(MessageModels message) async {
+  static Future<void> play(MessageModel message) async {
     player.pause();
     if (message.id != playAudioId.value) {
       player.play(
@@ -38,18 +39,18 @@ class FileController extends GetxController {
         posetion.value = value;
       },
     );
-   
   }
 
-  static String durationToString(Duration duration) {
-    return duration.toString().split(".")[0].substring(0);
+  static String durationToString(Duration duration, bool isAudio) {
+    return duration.toString().split(".")[0].substring(isAudio ? 2 : 0);
   }
 
   static Rx<MessageType> uploadFileType = MessageType.text.obs;
   static RxDouble uploadIndecator = 0.0.obs;
   static RxString filename = "".obs;
 
-  //send chat File
+//upload File message
+
   static Future<void> uploadChatFile(ChatModel chat, File file) async {
     filename.value = basename(file.path);
     uploadIndecator = 0.1.obs;
@@ -58,16 +59,12 @@ class FileController extends GetxController {
     uploadFileType.value = fileType(ext);
 
     //storage file ref with path
-    final ref = FirebaseController.storage
-        .ref(FirebaseController.user.uid)
+    final ref = FirebaseAPI.storage
+        .ref(FirebaseAPI.user.uid)
         .child('chat_file}');
 
-    //uploading image
     ref
-        .putFile(
-          file,
-          SettableMetadata(contentType: basename(file.path)),
-        )
+        .putFile(file, SettableMetadata(contentType: basename(file.path)))
         .snapshotEvents
         .listen((data) {
       uploadIndecator.value = data.bytesTransferred / data.totalBytes;
@@ -77,15 +74,13 @@ class FileController extends GetxController {
     String fileUrl = await ref.getDownloadURL();
 
     FileModel uploadFile = FileModel(
-      name: basename(file.path),
-      url: fileUrl,
-      fromAdress: file.path,
-    );
+        name: basename(file.path), url: fileUrl, fromAdress: file.path);
     uploadFileType.value = MessageType.text;
     //updating image in firestore database
-    await FirebaseController.sendMessage(chat, fileType(ext), file: uploadFile);
+    await FirebaseAPI.sendMessage(chat, fileType(ext), file: uploadFile);
   }
 
+// Identify the file type
   static MessageType fileType(String ext) {
     switch (ext.toLowerCase()) {
       case "jpeg":
@@ -106,8 +101,9 @@ class FileController extends GetxController {
     }
   }
 
+// download File maessage
   static Future downloadFile(
-      MessageModels msg, RxDouble progressIndecator) async {
+      MessageModel msg, RxDouble progressIndecator) async {
     progressIndecator.value = 0.1;
     final path = await DirectoryPath.getPath();
     var savePath = '$path/${msg.file!.name}';
@@ -142,8 +138,20 @@ class FileController extends GetxController {
     }
   }
 
-  static String getMessageFileUrl(MessageModels message) {
-    if (FirebaseController.me.id == message.fromId) {
+// Update message
+  static Future<void> updateMessageFile(MessageModel message) async {
+    log("UPDATE MESSAGe======= ${message.toJson()}");
+    await FirebaseAPI.firestore
+        .collection('messages')
+        .doc(message.chatId)
+        .collection("my_messages")
+        .doc(message.id)
+        .update(message.toJson());
+  }
+
+// select file message url
+  static String getMessageFileUrl(MessageModel message) {
+    if (FirebaseAPI.me.id == message.fromId) {
       return message.file!.fromAdress!;
     } else if (message.file!.dwnUrl != null) {
       return message.file!.dwnUrl!;
@@ -152,13 +160,8 @@ class FileController extends GetxController {
     }
   }
 
-  static Future<void> updateMessageFile(MessageModels message) async {
-    log("UPDATE MESSAGe======= ${message.toJson()}");
-    await FirebaseController.firestore
-        .collection('messages')
-        .doc(message.chatId)
-        .collection("my_messages")
-        .doc(message.id)
-        .update(message.toJson());
-  }
+//message Edit part
+
+  RxBool isSelect = false.obs;
+  RxList<MessageModel> selectMessages = <MessageModel>[].obs;
 }

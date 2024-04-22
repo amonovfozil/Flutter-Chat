@@ -1,17 +1,17 @@
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
   @override
   void onInit() {
-    FirebaseController.getSelfInfo();
+    FirebaseAPI.getSelfInfo();
     super.onInit();
   }
 
   @override
   void dispose() {
-    FirebaseController.updateActiveStatus(false);
+    FirebaseAPI.updateActiveStatus(false);
     super.dispose();
   }
 }

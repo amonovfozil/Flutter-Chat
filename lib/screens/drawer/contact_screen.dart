@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/user_models.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/screens/chats/widgets/user_card.dart';
@@ -15,15 +15,15 @@ class ContactScreen extends StatefulWidget {
 class _ContactScreenState extends State<ContactScreen> {
   @override
   void initState() {
-    FirebaseController.getAllContact();
+    FirebaseAPI.getAllContact();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      List<UserModel> contacts = FirebaseController.contacts
-          .where((user) => user.id != FirebaseController.me.id)
+      List<UserModel> contacts = FirebaseAPI.contacts
+          .where((user) => user.id != FirebaseAPI.me.id)
           .toList();
       return Scaffold(
         appBar: AppBar(
@@ -60,7 +60,7 @@ class _ContactScreenState extends State<ContactScreen> {
           itemBuilder: (context, index) => UserCard(
             user: contacts[index],
             press: () {
-              FirebaseController.creatUserChat(contacts[index]);
+              FirebaseAPI.creatUserChat(contacts[index]);
             },
           ),
         ),

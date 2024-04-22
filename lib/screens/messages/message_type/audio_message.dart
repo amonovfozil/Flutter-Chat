@@ -1,5 +1,5 @@
 import 'package:flutter_chat/logic/chats/file_controller.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import '../../../utils/constants.dart';
 
 class AudioMessage extends StatefulWidget {
-  final MessageModels message;
+  final MessageModel message;
 
   const AudioMessage({super.key, required this.message});
 
@@ -45,7 +45,7 @@ class _AudioMessageState extends State<AudioMessage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color: kPrimaryColor.withOpacity(
-                    widget.message.fromId == FirebaseController.me.id
+                    widget.message.fromId == FirebaseAPI.me.id
                         ? 1
                         : 0.1),
               ),
@@ -80,7 +80,7 @@ class _AudioMessageState extends State<AudioMessage> {
                                   ? Icons.pause
                                   : Icons.play_arrow,
                               color: widget.message.fromId ==
-                                      FirebaseController.me.id
+                                      FirebaseAPI.me.id
                                   ? Colors.white
                                   : kPrimaryColor,
                             ),
@@ -94,7 +94,7 @@ class _AudioMessageState extends State<AudioMessage> {
                         trackHeight: 3,
                         thumbColor: Colors.white,
                         activeTrackColor:
-                            FirebaseController.me.id == widget.message.fromId
+                            FirebaseAPI.me.id == widget.message.fromId
                                 ? kContentColorDarkTheme
                                 : kPrimaryColor,
                         inactiveTrackColor: Colors.white,
@@ -113,11 +113,11 @@ class _AudioMessageState extends State<AudioMessage> {
                   ),
                   if (isMe)
                     Text(
-                      "${FileController.durationToString(FileController.posetion.value)} / ${FileController.durationToString(FileController.duration.value)}",
+                      "${FileController.durationToString(FileController.posetion.value, true)} / ${FileController.durationToString(FileController.duration.value, true)}",
                       style: TextStyle(
                           fontSize: 10,
                           color:
-                              widget.message.fromId == FirebaseController.me.id
+                              widget.message.fromId == FirebaseAPI.me.id
                                   ? Colors.white
                                   : null),
                     ),

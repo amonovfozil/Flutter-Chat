@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/logic/chats/file_controller.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter_chat/utils/constants.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_chat/screens/components/undownload_file_view.dart';
 import 'package:get/get.dart';
 
 class ImageMessage extends StatefulWidget {
-  final MessageModels message;
+  final MessageModel message;
   const ImageMessage({super.key, required this.message});
 
   @override
@@ -70,7 +70,7 @@ class _ImageMessageState extends State<ImageMessage> {
                 UnDownloadFIleView(
                   isUpload: false,
                   isVisible:
-                      (widget.message.fromId != FirebaseController.me.id &&
+                      (widget.message.fromId != FirebaseAPI.me.id &&
                           widget.message.file!.dwnUrl == null),
                   progressIndecator: downloadIndecator.value,
                 ),

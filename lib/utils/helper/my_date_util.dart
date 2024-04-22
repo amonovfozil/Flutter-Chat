@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class MyDateUtil {
   // for getting formatted time from milliSecondsSinceEpochs String
   static Widget getFormattedTime(
-      {required BuildContext context, required MessageModels message}) {
+      {required BuildContext context, required MessageModel message}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -23,7 +23,7 @@ class MyDateUtil {
           ),
         ),
         const SizedBox(width: 5),
-        if (message.fromId == FirebaseController.me.id)
+        if (message.fromId == FirebaseAPI.me.id)
           Icon(
             message.status == MessageStatus.viewed
                 ? Icons.done_all

@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/screens/components/chat_card.dart';
 import 'package:flutter_chat/models/chat_models.dart';
 import 'package:flutter_chat/screens/messages/message_screen.dart';
@@ -32,7 +32,7 @@ class ChatScreenBody extends StatelessWidget {
         // ),
         Expanded(
           child: StreamBuilder(
-              stream: FirebaseController.getAllChats(),
+              stream: FirebaseAPI.getAllChats(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting ||
                     snapshot.connectionState == ConnectionState.none) {

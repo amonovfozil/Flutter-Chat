@@ -1,4 +1,4 @@
-import 'package:flutter_chat/logic/firebase/firebase_controller.dart';
+import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/utils/helper/my_date_util.dart';
@@ -8,7 +8,7 @@ import '../../../utils/constants.dart';
 class TextMessage extends StatelessWidget {
   const TextMessage({super.key, this.message});
 
-  final MessageModels? message;
+  final MessageModel? message;
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +19,14 @@ class TextMessage extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: kPrimaryColor.withOpacity(
-              message?.fromId == FirebaseController.me.id ? 1 : 0.1),
+              message?.fromId == FirebaseAPI.me.id ? 1 : 0.1),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(25),
             topRight: const Radius.circular(25),
             bottomLeft: Radius.circular(
-                message?.fromId == FirebaseController.me.id ? 25 : 0),
+                message?.fromId == FirebaseAPI.me.id ? 25 : 0),
             bottomRight: Radius.circular(
-                message?.fromId == FirebaseController.me.id ? 0 : 25),
+                message?.fromId == FirebaseAPI.me.id ? 0 : 25),
           ),
         ),
         constraints: BoxConstraints(
@@ -39,7 +39,7 @@ class TextMessage extends StatelessWidget {
               "${message!.msg!}               ",
               style: TextStyle(
                 height: 1.4,
-                color: message?.fromId == FirebaseController.me.id
+                color: message?.fromId == FirebaseAPI.me.id
                     ? Colors.white
                     : Theme.of(context).textTheme.bodyLarge!.color,
               ),
