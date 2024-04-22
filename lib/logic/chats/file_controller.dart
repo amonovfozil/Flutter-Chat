@@ -59,9 +59,8 @@ class FileController extends GetxController {
     uploadFileType.value = fileType(ext);
 
     //storage file ref with path
-    final ref = FirebaseAPI.storage
-        .ref(FirebaseAPI.user.uid)
-        .child('chat_file}');
+    final ref =
+        FirebaseAPI.storage.ref(FirebaseAPI.user.uid).child('chat_file');
 
     ref
         .putFile(file, SettableMetadata(contentType: basename(file.path)))

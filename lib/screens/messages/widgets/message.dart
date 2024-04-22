@@ -51,28 +51,28 @@ class Message extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.only(top: kDefaultPadding / 3),
-            child: Row(
-              mainAxisAlignment: message.fromId == FirebaseAPI.me.id
-                  ? MainAxisAlignment.end
-                  : MainAxisAlignment.start,
-              children: [
-                // if (message.fromId != FirebaseController.me.id) ...[
-                //   CircleImage(
-                //     radius: 35,
-                //     img: user.image,
-                //   ),
-                //   const SizedBox(width: kDefaultPadding / 2),
-                // ],
-
-                GestureDetector(
-                  onLongPress: () {
+            child: GestureDetector(
+                 onLongPress: () {
                     
                   },
-                  child: messageContaint(message),
-                ),
-                // if (message.fromId == FirebaseController.me.id)
-                //   MessageStatusDot(status: message.status)
-              ],
+              child: Row(
+                mainAxisAlignment: message.fromId == FirebaseAPI.me.id
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                children: [
+                  // if (message.fromId != FirebaseController.me.id) ...[
+                  //   CircleImage(
+                  //     radius: 35,
+                  //     img: user.image,
+                  //   ),
+                  //   const SizedBox(width: kDefaultPadding / 2),
+                  // ],
+              
+                  messageContaint(message),
+                  // if (message.fromId == FirebaseController.me.id)
+                  //   MessageStatusDot(status: message.status)
+                ],
+              ),
             ),
           );
         });
