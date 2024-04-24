@@ -161,6 +161,18 @@ class FileController extends GetxController {
 
 //message Edit part
 
-  RxBool isSelect = false.obs;
-  RxList<MessageModel> selectMessages = <MessageModel>[].obs;
+  static RxBool isSelect = false.obs;
+  static RxList<MessageModel> selectMessages = <MessageModel>[].obs;
+
+  static void selectMessage(MessageModel msg) {
+    if (isSelect.value) {
+      if (selectMessages.any((element) => element.id == msg.id)) {
+        selectMessages.remove(msg);
+      } else {
+        selectMessages.add(msg);
+      }
+
+      log("SELECT MESSAGE  ------$selectMessages");
+    }
+  }
 }

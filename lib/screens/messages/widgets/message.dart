@@ -1,9 +1,10 @@
+import 'package:flutter_chat/logic/chats/file_controller.dart';
 import 'package:flutter_chat/logic/firebase/firebase_api.dart';
 import 'package:flutter_chat/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/screens/messages/message_type/image_message.dart';
 import 'package:flutter_chat/screens/messages/message_type/pdf_message.dart';
-
+import 'package:get/get.dart';
 
 import '../../../utils/constants.dart';
 import '../message_type/audio_message.dart';
@@ -49,29 +50,42 @@ class Message extends StatelessWidget {
           //       .data());
           // }
 
-          return Padding(
-            padding: const EdgeInsets.only(top: kDefaultPadding / 3),
-            child: GestureDetector(
-                 onLongPress: () {
-                    
-                  },
-              child: Row(
-                mainAxisAlignment: message.fromId == FirebaseAPI.me.id
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-                children: [
-                  // if (message.fromId != FirebaseController.me.id) ...[
-                  //   CircleImage(
-                  //     radius: 35,
-                  //     img: user.image,
-                  //   ),
-                  //   const SizedBox(width: kDefaultPadding / 2),
-                  // ],
-              
-                  messageContaint(message),
-                  // if (message.fromId == FirebaseController.me.id)
-                  //   MessageStatusDot(status: message.status)
-                ],
+          return Obx(
+            () => Padding(
+              padding: const EdgeInsets.only(top: kDefaultPadding / 3),
+              child: GestureDetector(
+                onLongPress: () {
+                  FileController.isSelect.value = true;
+                  FileController.selectMessage(message);
+                },
+                onTap: () {
+                  FileController.selectMessage(message);
+                },
+                child: Row(
+                  mainAxisAlignment: message.fromId == FirebaseAPI.me.id
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    // if (message.fromId != FirebaseController.me.id) ...[
+                    //   CircleImage(
+                    //     radius: 35,
+                    //     img: user.image,
+                    //   ),
+                    //   const SizedBox(width: kDefaultPadding / 2),
+                    // ],
+                    if (message.fromId != FirebaseAPI.me.id &&
+                        FileController.isSelect.value)
+                      SelectMessageStatus(
+                          isSelect: FileController.selectMessages
+                              .any((elm) => elm.id == message.id)),
+                    messageContaint(message),
+                    if (message.fromId == FirebaseAPI.me.id &&
+                        FileController.isSelect.value)
+                      SelectMessageStatus(
+                          isSelect: FileController.selectMessages
+                              .any((elm) => elm.id == message.id))
+                  ],
+                ),
               ),
             ),
           );
@@ -79,38 +93,27 @@ class Message extends StatelessWidget {
   }
 }
 
-class MessageStatusDot extends StatelessWidget {
-  final MessageStatus? status;
+class SelectMessageStatus extends StatelessWidget {
+  final bool isSelect;
 
-  const MessageStatusDot({super.key, this.status});
+  const SelectMessageStatus({super.key, required this.isSelect});
   @override
   Widget build(BuildContext context) {
-    Color dotColor(MessageStatus status) {
-      switch (status) {
-        case MessageStatus.notSent:
-          return kErrorColor;
-        case MessageStatus.notView:
-          return Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.1);
-        case MessageStatus.viewed:
-          return kPrimaryColor;
-        default:
-          return Colors.transparent;
-      }
-    }
-
     return Container(
       margin: const EdgeInsets.only(left: kDefaultPadding / 2),
       height: 12,
       width: 12,
       decoration: BoxDecoration(
-        color: dotColor(status!),
+        color: isSelect ? kPrimaryColor : kSecondaryColor,
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        status == MessageStatus.notSent ? Icons.close : Icons.done,
-        size: 8,
-        color: Theme.of(context).scaffoldBackgroundColor,
-      ),
+      child: isSelect
+          ? Icon(
+              Icons.done,
+              size: 8,
+              color: Theme.of(context).scaffoldBackgroundColor,
+            )
+          : SizedBox(),
     );
   }
 }
